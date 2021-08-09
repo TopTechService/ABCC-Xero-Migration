@@ -1,0 +1,2 @@
+<apex:page standardController="Account" extensions="connectXero" action="{!authorizeNamedCredential}">
+</apex:page>

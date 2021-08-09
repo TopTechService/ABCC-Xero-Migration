@@ -1,0 +1,127 @@
+<apex:page standardController="Event__c"  showHeader="True" tabStyle="Event__c"  standardStylesheets="true" extensions="EventDetailTabExtention">
+<apex:stylesheet value="/sCSS/25.0/sprites/1342034628000/Theme3/default/gc/versioning.css" />
+<apex:stylesheet value="/sCSS/25.0/sprites/1342034628000/Theme3/default/gc/extended.css" />
+    <style>
+        #LoadingDiv{
+        margin:0px 0px 0px 0px;
+        position:fixed;
+        height: 100%;
+        z-index:9999;
+        padding-top:10%;
+        padding-left:35%;
+        width:100%;
+        clear:none;
+        background:none;
+        /*background-color:#666666;
+        border:1px solid #000000;*/
+        }
+        /*IE will need an 'adjustment'*/
+        * html #LoadingDiv{
+        position: absolute;
+        height: expression(document.body.scrollHeight > document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');
+        }
+    </style>
+    <script>
+        function startspiner()
+        {
+            var ldiv = document.getElementById('LoadingDiv');
+            ldiv.style.display='block';
+        }
+        function stopspiner()
+        {
+            var ldiv = document.getElementById('LoadingDiv');
+            ldiv.style.display = 'none';    
+        }
+    </script>
+    
+   <apex:tabPanel switchType="client" selectedTab="tabdetails" id="EventTabPanel" tabClass="activeTab" inactiveTabClass="inactiveTab" >
+       <apex:tab label="Details" name="Event Details" id="tabdetails" >
+         <apex:detail relatedList="false" title="true" inlineEdit="true"/>
+       </apex:tab>
+       <apex:tab label="Event Attendees" name="Event Registrations"  id="registration">
+           <apex:form >
+               <apex:actionStatus id="spiner" onStart="startspiner();" onStop="stopspiner();"/>
+               <div id="LoadingDiv" style="display:none;"><apex:image url="/servlet/servlet.FileDownload?file=0156F00000DVbSv"/></div>
+               <center>
+                   <b>View:&nbsp;&nbsp;</b>
+                   <apex:selectList value="{!filterString}" multiselect="false" size="1" >
+                       <apex:actionSupport event="onchange" action="{!changeListToShow}" reRender="eventReg" status="spiner"/>
+                       <apex:selectOption itemValue="All" itemLabel="All"/>
+                       <apex:selectOption itemValue="Attendees" itemLabel="Attendees"/>
+                       <apex:selectOption itemValue="Wait List" itemLabel="Wait List"/>
+                       <apex:selectOption itemValue="Cancelled" itemLabel="Cancelled"/> 
+                   </apex:selectList>
+               </center><br/>
+               <apex:pageBlock id="eventReg">
+                   <apex:pageBlockButtons >
+                       <apex:commandButton action="{!updateNoShow}" value="Update No Show" />
+                       <apex:variable var="c" value="{!URLENCODE(LEFT(Event__c.id,15))}" />
+                       <apex:commandButton action="{! URLFOR( "/00O6F00000BCSLu", null, [pv0=c, pv1="Outstanding,Successful"] ) }" value="Export Attendee Details" oncomplete=""/>
+                       <apex:commandButton action="{! URLFOR( "/apex/EventRegistrationPopUpContent", null, [id=Event__c.Id,type="manual"] ) }" value="Manual Registration"/>
+                   </apex:pageBlockButtons>
+                   <apex:pageBlockTable value="{!mapToShow}" var="item">
+                       <apex:column headerValue="No Show"> 
+                           <apex:inputCheckbox value="{!mapToShow[item].NO_SHOWS__c}"/>
+                       </apex:column>
+                       <apex:column headerValue="Registration Number"> 
+                           <apex:outputLink value="{!URLFOR($Action.Event_Registration__c.View, mapToShow[item].Id)}">{!mapToShow[item].Name}</apex:outputLink> 
+                       </apex:column>
+                       <apex:column headerValue="First Name"> 
+                           <apex:outputText value="{!mapToShow[item].First_Name__c}"/>
+                       </apex:column>
+                       <apex:column headerValue="Last Name"> 
+                           <apex:outputText value="{!mapToShow[item].Last_Name__c}"/>
+                       </apex:column>
+                       <apex:column headerValue="Email"> 
+                           <apex:outputText value="{!mapToShow[item].Email__c}"/>
+                       </apex:column>
+                       <apex:column headerValue="Company"> 
+                           <apex:outputText value="{!mapToShow[item].Company__c}"/>
+                       </apex:column>
+                       <apex:column headerValue="Job Title"> 
+                           <apex:outputText value="{!mapToShow[item].Job_Title__c}"/>
+                       </apex:column>
+                       <apex:column headerValue="Opportunity"> 
+                           <apex:outputLink value="{!URLFOR($Action.Opportunity.View, mapToShow[item].Opportunity__c)}">{!mapToShow[item].Opportunity__r.Name}</apex:outputLink> 
+                       </apex:column>
+                       <apex:column headerValue="Package Type"> 
+                           <apex:outputText value="{!mapToShow[item].Package_Type__c}"/>
+                       </apex:column>
+                       <apex:column headerValue="Payment Status"> 
+                           <apex:outputText value="{!mapToShow[item].Registration_Status__c}"/>
+                       </apex:column>
+                       <apex:column headerValue="Registration Type"> 
+                           <apex:outputText value="{!mapToShow[item].Registration_Type__c}"/>
+                       </apex:column>
+                       <apex:column headerValue="Table"> 
+                           <apex:outputText value="{!mapToShow[item].Table__r.Name}"/>
+                       </apex:column>
+                   </apex:pageBlockTable>
+               </apex:pageBlock>
+           </apex:form>
+       </apex:tab>
+        <apex:tab label="Ticket Prices" name="Event Package" id="package" >
+            <apex:relatedList subject="{!Event__c}" list="Event_Package__r" />
+        </apex:tab>
+        
+        <apex:tab label="Speakers" name="Speakers" id="Speakers" >
+            <apex:relatedList list="Speakers__r" subject="{!Event__c}"/>
+        </apex:tab>
+        <apex:tab label="Event Sponsors" name="Event Sponsors"  id="sponsors">
+            <apex:relatedList subject="{!Event__c}" list="Event_Sponsors__r" />
+        </apex:tab>
+        
+        <apex:tab label="Discounts" name="Discount" id="Discount" > 
+            <apex:relatedList subject="{!Event__c}" list="Discounts__r" /> 
+        </apex:tab>
+                
+        <apex:tab label="Notes And Attachments" name="Notes And Attachments" id="Notes" >
+            <apex:relatedList list="CombinedAttachments" subject="{!$CurrentPage.parameters.id}"/>
+        </apex:tab>
+        
+        <apex:tab label="Tables" name="Tables" id="Tables" >
+            <apex:relatedList list="Tables__r" subject="{!$CurrentPage.parameters.id}"/>
+        </apex:tab>
+        
+   </apex:tabPanel>
+</apex:page>

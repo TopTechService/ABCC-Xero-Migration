@@ -1,0 +1,31 @@
+<apex:page showHeader="false" standardStylesheets="false" id="page">
+	<apex:outputPanel id="header" layout="block">
+		<!--<apex:image url="{!abccLogoURL}" style="display: block; margin: 0 auto; margin-bottom: 20px;"/>-->
+        <center><img alt="Australian British Chamber of Commerce" src="https://www.britishchamber.com/sites/all/themes/abcc/logo.png"/></center>
+	</apex:outputPanel>
+    
+    <div>
+        
+    </div>
+
+	<apex:outputPanel id="content" layout="block">
+		<!-- Paste your Fail Page APEX or HTML code here -->
+		<apex:pageBlock >
+			<center><apex:pageMessage summary="Unfortunately, that payment data did not work. Please either re enter the information or use a different payment source." severity="error" strength="3" /></center>
+		</apex:pageBlock>
+	</apex:outputPanel>
+	
+	 <script type="text/javascript">
+        var msgBlock = document.getElementsByClassName('messageText')[0];
+        var a = document.createElement("a");
+        a.href = document.referrer + '?oppid={!$CurrentPage.parameters.oppId}';
+        a.style.fontSize = '100%';
+        a.style.margin = '0px';
+    	a.style.textAlign = "center";
+        a.appendChild(document.createTextNode('Click here to get back'));
+        msgBlock.appendChild(a);
+    </script>
+    <br/>
+    <div id="footer" style="position:absolute;bottom:0;width:100%;height:60px;background:#6cf;height:auto;">
+                            <center>If you require any assistance, please call the ABCC head office on 02 9247 6271 or email events@britishchamber.com</center></div>
+</apex:page>

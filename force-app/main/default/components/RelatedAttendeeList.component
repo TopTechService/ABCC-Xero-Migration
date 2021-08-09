@@ -1,0 +1,250 @@
+<apex:component controller="RelatedAttendeeListCotroller">
+    <script>
+    function validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+    
+    function validate(email) {
+        
+        if (validateEmail(email)) {
+            //valid
+            return true;
+        } else {
+            // invalid
+            return false;
+        }
+        
+    }  
+    
+    function checkcheckboxes()
+    {    
+        var checkboxs = document.querySelectorAll("[id$=inp_attd]"); 
+        var valuetocheck = new Array();
+        var k=0;
+        for (var i = 0; i < checkboxs.length; i++) 
+        {
+            if (checkboxs[i].checked!=true) 
+            {                            
+                var flagofrequired = checkvalues(i+1);
+                valuetocheck[i]=flagofrequired;                             
+            }
+            
+        }
+        
+        if(valuetocheck.includes(false))
+        {
+            return false;
+        }
+        return true;
+        
+    }
+    function checkvalues(trno)
+    {
+        var isvalidcell=true;
+        $("#table_attendees tr").each(function() 
+                                      {
+                                          var idoftr= $(this).attr('id');
+                                          
+                                          if(idoftr==trno)
+                                          {
+                                              
+                                              
+                                              var lenthoftextboxes=$('#'+idoftr).find("input[type=text]").length;
+                                              var textboxes =$('#'+idoftr).find("input[type=text]");
+                                              
+                                              for(var m=0;m<lenthoftextboxes-3;m++)
+                                              {
+                                                  if(m==2)
+                                                  {
+                                                      
+                                                      if(((textboxes[m].value).length!=0))
+                                                      {
+                                                          if(validate(textboxes[m].value)==true)
+                                                          {
+                                                              
+                                                              // valid email 
+                                                              isStepValid = true;
+                                                          }
+                                                          else
+                                                          {
+                                                              
+                                                              isvalidcell =false;
+                                                              
+                                                              break;
+                                                              
+                                                              
+                                                          }
+                                                          
+                                                          
+                                                      }
+                                                  }
+                                                  else
+                                                  {
+                                                      if(((textboxes[m].value==null)||(textboxes[m].value=='')))
+                                                      {
+                                                          
+                                                          isvalidcell =false;
+                                                          break;
+                                                          
+                                                      }
+                                                  }
+                                                  
+                                              }
+                                              
+                                              
+                                              
+                                          }
+                                          
+                                      });
+        return isvalidcell;
+        
+    }
+    </script>
+<style>
+/*Features table------------------------------------------------------------*/
+.features-table
+{
+  width: 100%;
+  margin: 0 auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-shadow: 0 1px 0 #fff;
+  color: #2a2a2a;
+  background: #fafafa;  
+  background-image: -moz-linear-gradient(top, #fff, #eaeaea, #fff); /* Firefox 3.6 */
+  background-image: -webkit-gradient(linear,center bottom,center top,from(#fff),color-stop(0.5, #eaeaea),to(#fff)); 
+}
+
+.features-table td
+{
+  height: 30px;
+  line-height: 30px;
+  padding: 0 3px;
+  border-bottom: 1px solid #cdcdcd;
+  box-shadow: 0 1px 0 white;
+  -moz-box-shadow: 0 1px 0 white;
+  -webkit-box-shadow: 0 1px 0 white;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/*Body*/
+.features-table tbody td
+{
+  text-align: center;
+  font: normal 12px Verdana, Arial, Helvetica;
+  width: 50px;
+}
+
+.features-table tbody td:first-child
+{
+  width: auto;
+  text-align: left;
+}
+
+.features-table td:nth-child(2), .features-table td:nth-child(3)
+{
+  background: #efefef;
+  background: rgba(144,144,144,0.15);
+  border-right: 1px solid white;
+}
+
+
+.features-table td:nth-child(4)
+{
+  background: #e7f3d4;  
+  background: rgba(184,243,85,0.3);
+}
+
+/*Header*/
+.features-table thead td
+{
+  font: bold 1.3em 'trebuchet MS', 'Lucida Sans', Arial;  
+  -moz-border-radius-topright: 10px;
+  -moz-border-radius-topleft: 10px; 
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  border-top: 1px solid #eaeaea; 
+}
+
+.features-table thead td:first-child
+{
+  border-top: none;
+}
+
+/*Footer*/
+.features-table tfoot td
+{
+  font: bold 1.4em Georgia;  
+  -moz-border-radius-bottomright: 10px;
+  -moz-border-radius-bottomleft: 10px; 
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom: 1px solid #dadada;
+}
+
+.features-table tfoot td:first-child
+{
+  border-bottom: none;
+}
+.classforwidth
+{
+    width:100px;
+}
+    
+     @media (max-width:768px){
+    	table.attendeeTable {width:100% !important;}
+    	.tableHeadRow {display:none;}
+    	table.attendeeTable tr td:before { content: attr(data-label); display: block; padding: 0 0 4px; }
+    	table.attendeeTable tr td {height:unset; padding: 5px 5px; position: relative;}
+    	table.attendeeTable tr td { display: block; width: 100%; text-align: left; }
+    	.attendRow td font  {margin-bottom: 6px; display: block; position: absolute; top: 12px; right: 4px;}
+    	.classforwidth { width: 100%; height: 34px; padding: 6px 12px; font-size: 14px; line-height: 1.42857143; color: #555; background-color: #fff; background-image: none; border: 1px solid #ccc; border-radius: 4px; -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075); box-shadow: inset 0 1px 1px rgba(0,0,0,.075); -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s; -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; }
+    	.dummyclassforlabel {height:unset; border:0 none; box-shadow:none; padding: 0;}
+    }
+</style>
+    <apex:attribute name="parentPageController" type="PageControllerBase" assignTo="{!pageController}" required="false" description="The controller for the page." />
+    <apex:attribute name="maxTableSize" description="Maximum Attenddes Can Be Added" type="Integer" assignTo="{!maxAttendees}" required="false"/>
+    
+    <apex:outputPanel Id="AttendeeList">
+            
+        <table class="features-table attendeeTable" id="table_attendees" style="margin:auto;width:90%" >
+            <tr id="tablehead_row" class="tableHeadRow">
+                <apex:repeat value="{!headers}" var="header">
+                    <td>{!header}</td>
+                </apex:repeat>
+            </tr>
+            
+            <apex:variable var="rowNum" value="{!1}" />
+            <apex:repeat value="{!Attendees}" var="key" id="rpt_attendes">
+            
+                <apex:repeat value="{!Attendees[key]}" var="Attendee" id="rpt_attend">
+                    <tr id="{!rowNum}" class="attendRow">
+                        <td data-label="#"><apex:outputLabel styleClass="dummyclassforlabel classforwidth" value="{!rowNum}"></apex:outputLabel></td>
+                        <td data-label="Not Known"><apex:inputCheckbox id="inp_attd" value="{!Attendee.undefined}" onclick="makeRecordUndefined({!key})"/></td>
+                        <td data-label="First Name"><apex:inputText styleClass="classforwidth" id="inp_firstname" value="{!Attendee.firstName}" disabled="{!Attendee.undefined}"/> <font color="red">*</font></td>
+                        <td data-label="Last Name"><apex:inputText styleClass="classforwidth" id="inp_lastname" value="{!Attendee.lastName}" disabled="{!Attendee.undefined}"/> <font color="red">*</font></td>
+                        <td data-label="Email"><apex:inputText styleClass="classforwidth" id="inp_email" value="{!Attendee.email}" disabled="{!Attendee.undefined}"/></td>
+                        <td data-label="Company"><apex:inputText styleClass="classforwidth" id="inp_company" value="{!Attendee.company}" disabled="{!Attendee.undefined}"/></td>
+                        <td data-label="Position Title"><apex:inputText styleClass="classforwidth" id="positionTitle" value="{!Attendee.positionTitle}" disabled="{!Attendee.undefined}"/></td>
+                        <td data-label="Dietary Requirements"><apex:inputText styleClass="classforwidth" id="Dietary_Req" value="{!Attendee.Dietary_Req}" disabled="{!Attendee.undefined}"/></td>
+                    </tr>
+                    <apex:variable value="{!rowNum + 1}" var="rowNum"/> 
+                </apex:repeat>
+              
+            </apex:repeat>
+            <apex:actionFunction action="{!makeRecordUndefined}" name="makeRecordUndefined" reRender="AttendeeList" status="status_message">
+                <apex:param name="attendeeKey" assignTo="{!attendeeKey}" value=""/>
+            </apex:actionFunction>
+                <!--<tr>
+                    <td><apex:outputLabel value="{!rowNum}"></apex:outputLabel></td>
+                    <td><apex:inputText value="{!firstName}" id="firstName"/></td>
+                    <td><apex:inputText value="{!lastName}" id="lastName"/></td>
+                    <td><apex:inputText value="{!email}" id="email"/></td>
+                    <td><apex:inputText value="{!phone}" id="phone"/></td>
+                    <td></td>
+                </tr>-->
+        </table>
+        </apex:outputPanel>
+</apex:component>

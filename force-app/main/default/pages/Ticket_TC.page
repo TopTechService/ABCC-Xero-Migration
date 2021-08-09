@@ -1,0 +1,91 @@
+<apex:page showHeader="false" sidebar="false">
+<style >
+b{
+ display: block;
+    margin-top: 0em;
+    margin-bottom: 0em;
+    margin-left: 10%;
+    margin-right: 10%;
+    font-size :15px
+}
+p {
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+h1{
+
+font-size:30px
+}
+#page-wrap {
+     width: 1200px;
+     margin: 0 auto;
+     border-color: #000000;
+     border-width: 1px;
+     border-style: solid;
+}
+</style>
+
+  <form> 
+ <br/> 
+ <div id="page-wrap">
+ <!--<apex:outputPanel id="header" layout="block">
+      <apex:image url="{!abccLogoURL}" style="display: block; margin: 0 auto; margin-bottom: 20px;"/>
+ </apex:outputPanel>-->
+     <center><img alt="Australian British Chamber of Commerce" src="https://www.britishchamber.com/sites/all/themes/abcc/logo.png"/></center>
+ <center><h1>Ticketing Terms Conditions of Sale</h1></center>
+ 
+ <p>Please read these terms and conditions carefully before purchasing tickets. By purchasing tickets, you (the “Purchaser”) are agreeing to be bound by the following terms and conditions. [If you choose not to be bound by the terms and conditions, the Australian British Chamber of Commerce (the “Chamber”) does not grant you the right to purchase tickets.]</p><br/>
+ 
+ <b>Variation</b><br/>
+ 
+ <p>The Chamber may vary these terms and conditions at any time. Any variations become effective on posting of the revised terms and conditions on the Chamber’s website (www.britishchamber.com). By making a purchase after the terms and conditions have been varied, the Purchaser agrees to be bound by the variation.</p><br/>
+ 
+ <b>General Terms and Conditions</b><br/>
+
+ <p>The Chamber reserves the right to capture your registration contact details in order to contact you in future with opportunities and marketing. You can opt out or elect to be removed<br/> 
+
+from the database at any time. Webinar registration details will be captured by the third party provider, Zoom or Arkadin/NTT, and used in accordance with their Privacy Policies.</p>
+ 
+ <p>Tickets must be paid for in full by two (2) working days prior to an event. The Chamber reserves the right to deny entry to attendees with outstanding fees.<br/>
+ 
+ The Chamber reserves the right to add, withdraw, reschedule or substitute speakers and/or vary advertised programs, prices, venues, seating arrangements and audience capacity.<br/>
+ 
+ Dietary requirements must be advised no later than seven (7) calendar days prior to the event. By agreeing to these terms and conditions, the Purchaser acknowledges that failure to provide such notice may result in a meal being served that does not meet their dietary requirements.<br/>
+ 
+ The use of cameras, audio and video recorders is at the discretion of the Chamber and may not be permitted at an event. <br/>
+ 
+ By purchasing a ticket, the Purchaser gives consent to their photo being taken and/or featuring in a video recording of the event. The Chamber reserves the right to broadcast and/or telecast any event and take photos for publication.</p><br/>
+ 
+ <b>Cancellation by the Chamber</b><br/>
+ 
+ <p>In the circumstance that an event to be held by the Australian British Chamber of Commerce is cancelled for any reason, all amounts paid by a Purchaser, less any surcharge for the use of certain credit cards, can be used by the Purchaser as a credit toward a future event or will be refunded by the Chamber to the Purchaser.</p><br/>
+ 
+ <b>Cancellation by the Purchaser</b><br/>
+ 
+ <p>In general, unless otherwise stated, event bookings are transferable and if a Purchaser is not able to attend, they may send another person in their place.  Please note that prior notice of such a substitution must be provided to the Chamber (events@britishchamber.com), 7 calendar days in advance of the event.<br/>
+ 
+ If a Purchaser is unable to attend or find someone to take their place, the following policy applies:<br/>
+ <br/><br/>
+ 1. Cancellations will only be accepted in writing, <br/><br/>
+a.  For events in NSW, ACT and QLD by email addressed to events@britishchamber.com; or<br/>
+b.  For events in VIC, WA and SA by email addressed to abccvic@britishchamber.com<br/>
+
+<br/>
+
+2.  For notice of cancellation received up to seven (7) calendar days prior to the event the Purchaser may choose to either – <br/><br/>
+a.  Apply the full amount, less any surcharge for use of credit cards for the initial purchase, of the purchase price to another Chamber event as long as such event falls within 4 months of the cancellation date.<br/>
+b.  Request for the ticket to be credited to a new event within the next 6 months. <br/><br/>
+
+3.  For notice of cancellation received less than seven (7) days prior to an event no refunds or credits will be given.<br/>
+ </p>
+     <p>
+         <b style="margin-left:0%"><apex:outputText value="Media attendance at ABCC events"></apex:outputText><br/></b><br/>
+         Please note that the Chamber reserves the right to restrict media access to any event. If access is permitted, we reserve the right to direct the conduct of the media during the event. <br/>
+         The Chamber would appreciate acknowledgement in any content (such as news articles, TV or radio stories or online news) generated by the event.
+     </p>
+ </div>
+  </form>
+</apex:page>

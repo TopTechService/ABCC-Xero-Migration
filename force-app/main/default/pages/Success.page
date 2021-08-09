@@ -1,0 +1,369 @@
+<apex:page showHeader="false" standardStylesheets="false" id="page" controller="SuccessController">
+    <meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <meta name="MobileOptimized" content="width" />
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <apex:includeScript value="{!$Resource.jquery}" />
+    <apex:includeScript value="{!$Resource.smartWizard}" />
+    <apex:stylesheet value="{!$Resource.smart_wizard}" />
+    <apex:stylesheet value="{!$Resource.smart_wizard_theme_arrows}" />
+    <apex:stylesheet value="{!$Resource.smart_wizard_theme_circles}" />
+    <apex:stylesheet value="{!$Resource.smart_wizard_theme_dots}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <!-- Optional Bootstrap theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous" />    
+    <style>
+        /*Features table------------------------------------------------------------*/
+        .features-table {
+        width: 100%;
+        margin: 0 auto;
+        border-collapse: separate;
+        border-spacing: 0;
+        text-shadow: 0 1px 0 #fff;
+        color: #2a2a2a;
+        background: #fafafa;  
+        background-image: -moz-linear-gradient(top, #fff, #eaeaea, #fff); /* Firefox 3.6 */
+        background-image: -webkit-gradient(linear,center bottom,center top,from(#fff),color-stop(0.5, #eaeaea),to(#fff)); 
+        }
+        
+        .features-table td {
+        height: 30px;
+        line-height: 10px;
+        padding: 0 10px;
+        border-bottom: 1px solid #cdcdcd;
+        box-shadow: 0 1px 0 white;
+        -moz-box-shadow: 0 1px 0 white;
+        -webkit-box-shadow: 0 1px 0 white;
+        white-space: nowrap;
+        text-align: center;
+        }
+        
+        /*Body*/
+        .features-table tbody td {
+        text-align: center;
+        font: normal 12px Verdana, Arial, Helvetica;
+        width: 100px;
+        }
+        
+        .features-table tbody td:first-child {
+        width: auto;
+        text-align: left;
+        }
+        
+        .features-table td:nth-child(2), .features-table td:nth-child(3) {
+        background: #efefef;
+        background: rgba(144,144,144,0.15);
+        border-right: 1px solid white;
+        }
+        
+        
+        .features-table td:nth-child(4) {
+        background: #e7f3d4;  
+        background: rgba(184,243,85,0.3);
+        }
+        
+        /*Header*/
+        .features-table thead td {
+        font: bold 1.3em 'trebuchet MS', 'Lucida Sans', Arial;  
+        -moz-border-radius-topright: 10px;
+        -moz-border-radius-topleft: 10px; 
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+        border-top: 1px solid #eaeaea; 
+        }
+        
+        .features-table thead td:first-child {
+        border-top: none;
+        }
+        
+        /*Footer*/
+        .features-table tfoot td {
+        font: bold 1.4em Georgia;  
+        -moz-border-radius-bottomright: 10px;
+        -moz-border-radius-bottomleft: 10px; 
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-bottom: 1px solid #dadada;
+        }
+        .features-table tfoot td:first-child{
+            border-bottom: none;
+        }
+        @media (max-width:767px){
+            .col-xs-6, .col-xs-4 {width:100%;}
+            .table-responsive>.table>tbody>tr>td, .table-responsive>.table>tbody>tr>th, .table-responsive>.table>tfoot>tr>td, .table-responsive>.table>tfoot>tr>th, .table-responsive>.table>thead>tr>td, .table-responsive>.table>thead>tr>th {
+                white-space: normal;
+            }
+            td.col-md-2 { width: 40%; }
+            .nomar-btm {margin-bottom:0;}
+            .container {width:100% !important;}
+            .pagelogo {max-width:250px; margin:0 auto;}
+            .headerRow {display:none;}
+            table.table.tableStyleRes tr td { display: block; min-height:36px; }
+            table.tableStyleRes tr td:before { content: attr(data-label); display: inline-block; width: 40%; }
+            table.tableStyleRes tr td.noLabel:before {display:none;}
+            table.tableStyleRes tr td.noLabel { min-height: unset; line-height: 10px; }
+            .sideSpace {padding-left:15px; padding-right:15px;}
+        
+        }
+    </style>
+    <style type="text/css" media="print">
+        .dontprint { display: none; }
+    </style>
+    <div style="width: 80%; margin: auto;" class="container">
+        <apex:outputPanel id="header" layout="block">
+            <!--<apex:image url="{!abccLogoURL}" style="display: block; margin: 0 auto; margin-bottom: 20px;"/>-->
+            <center>
+                <a href = 'https://www.britishchamber.com/'>
+                    <img alt="Australian British Chamber of Commerce" class="pagelogo"  src="https://www.britishchamber.com/sites/britishchamber.com/files/ABCC%20Logo-min.jpg"/>
+                </a>
+            </center>
+        </apex:outputPanel>
+        <apex:outputPanel id="content" layout="block">
+            <!-- Paste your Success Page APEX or HTML code here -->
+            <apex:pageBlock >
+                <center>
+                    <apex:pageMessage summary="Success! Your payment was successful. Find your booking details below, click below print icon to print this page." severity="confirm" strength="3" />
+                    <a href="javascript:;" onclick="window.print()" class="table dontprint">
+                        <img style="width:35px;" src="https://simplesharebuttons.com/images/somacro/print.png" alt="Print" />
+                    </a>
+                </center>
+                <br/>
+                <table class="table dontprint">
+                    <tr>
+                        <td colspan="3" align="center">
+                            <c:socialshare shareURL="{!$Site.CurrentSiteUrl}?Id={!eventId}"
+                                           startDate="{!startDateStr}" 
+                                           endDate="{!endDateStr}"
+                                           headerText="{!eventname}"
+                                           eventlocation="{!eventlocation}"
+                                           timezone="{!timeZoneStr}">
+                            </c:socialshare> 
+                        </td>
+                    </tr>
+                </table>
+                <!--<table>
+                <tr>
+                <table class="table">
+                <tr>
+                <td colspan="3" style="background-color:#337ab7;padding:3px;">Ticket Details</td>
+                </tr>
+                <tr>
+                <td style="padding:3px;">Transaction Id</td>
+                <td style="padding:3px;">Ticket</td>
+                <td style="padding:3px;">Total Price</td>
+                </tr>
+                <tr>
+                <td style="padding:3px;">{!transactionId}</td>
+                <td style="padding:3px;">{!opp.Event_Package__r.Name} x {!opp.Ticket_Qty__c}</td>
+                <td style="padding:3px;">{!amounts}</td>
+                </tr>
+                </table>
+                </tr>
+                </table>-->
+                <table class="table">
+                    <tr>
+                        <td colspan="3" style="background-color:#337ab7;padding:3px;"><font color="white">Ticket Details</font></td>
+                    </tr>
+                </table>
+                <div class="col-xs-4">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-2">Transaction Id</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3">{!transactionId}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-3">Ticket</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3">{!opp.Event_Package__r.Name} x {!opp.Ticket_Qty__c}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-3">Total Price</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3">{!amounts}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <table class="table">
+                    <tr>
+                        <td colspan="3" style="background-color:#337ab7;padding:3px;"><font color="white">Event Details</font></td>
+                    </tr>
+                </table>
+                <div class="col-xs-4">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-2">Name</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3">{!opp.Event__r.Event_Name__c}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-3">When</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3">{!eventWhen}&nbsp;{!eventWhenTime}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-3">Where</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3">{!eventlocation}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- <table class="table">
+                <tr>
+                <td colspan="3" style="background-color:#337ab7;padding:3px;">Event Details</td>
+                </tr>
+                <tr>
+                <td style="padding:3px;">Name</td>
+                <td style="padding:3px;">When</td>
+                <td style="padding:3px;">Where</td>
+                </tr>
+                <tr>
+                <td style="padding:3px;">{!opp.Event__r.Event_Name__c}</td>
+                <td style="padding:3px;">{!eventWhen}&nbsp;{!eventWhenTime}</td>
+                <td style="padding:3px;">{!eventlocation}</td>
+                </tr>
+                </table> -->
+                <table class="table">
+                    <tr>
+                        <td colspan="3" style="background-color:#337ab7;padding:3px;"><font color="white">Invitee Details</font></td>
+                    </tr>
+                </table>
+                <div class="col-xs-6">
+                    <div class="table-responsive nomar-btm">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-2">First Name</td>
+                                    <td class="col-md-3">{!opp.Primary_Contact__r.firstName}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-2">Last Name</td>
+                                    <td class="col-md-3">{!opp.Primary_Contact__r.LastName}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-2">Email</td>
+                                    <td class="col-md-3">{!opp.Primary_Contact__r.email}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-2">Position Title</td>
+                                    <td class="col-md-3">{!opp.Primary_Contact__r.title} </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-2">Company</td>
+                                    <td class="col-md-3">{!opp.Primary_Contact__r.Company_Name__c}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-2">Work Phone</td>
+                                    <td class="col-md-3">{!opp.Primary_Contact__r.Phone}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-2">Mobile Phone</td>
+                                    <td class="col-md-3">{!opp.Primary_Contact__r.MobilePhone}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="table-responsive" style="border-top: 0 none; margin-top: -1px;">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-2">Address</td>
+                                    <td class="col-md-3">{!opp.Primary_Contact__r.MailingStreet}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-2"></td>
+                                    <td class="col-md-3">{!opp.Primary_Contact__r.MailingCity}&nbsp;{!opp.Primary_Contact__r.MailingState}&nbsp;{!opp.Primary_Contact__r.MailingPostalCode}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-2"></td>
+                                    <td class="col-md-3">{!opp.Primary_Contact__r.MailingCountry}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="sideSpace">
+                    <table class="table tableStyleRes">
+                        <tr>
+                            <td colspan="7" bgcolor="#337ab7" class="noLabel"><font color="white">Attendees Details</font></td>
+                        </tr>
+                        <tr class="headerRow">
+                            <td style="padding:3px;"></td>
+                            <td style="padding:3px;">First Name</td>
+                            <td style="padding:3px;">Last Name</td>
+                            <td style="padding:3px;">Email</td>
+                            <td style="padding:3px;">Company</td>
+                            <td style="padding:3px;">Position Title</td>
+                            <td style="padding:3px;">Dietary Requirements</td>
+                        </tr>    
+                        <apex:variable var="rowNum" value="{!1}" />
+                        <apex:repeat value="{!opp.Event_Registrations__r}" var="Attendee">
+                            <tr>
+                                <td style="padding:3px;" data-label=""><apex:outputLabel value="{!rowNum}"></apex:outputLabel></td>
+                                <td style="padding:3px;" data-label="First Name">{!Attendee.First_Name__c}</td>
+                                <td style="padding:3px;" data-label="Last Name">{!Attendee.Last_Name__c}</td>
+                                <td style="padding:3px;" data-label="Email">{!Attendee.Email__c}</td>
+                                <td style="padding:3px;" data-label="Company">{!Attendee.Company__c}</td>
+                                <td style="padding:3px;" data-label="Position Title">{!Attendee.Job_Title__c}</td>
+                                <td style="padding:3px;" data-label="Dietary Requirements">{!Attendee.Dietary_Requirements__c}</td>
+                            </tr>
+                            <apex:variable value="{!rowNum + 1}" var="rowNum"/> 
+                        </apex:repeat>
+                    </table>
+                </div>
+            </apex:pageBlock>
+        </apex:outputPanel>
+    </div>    
+    <!-- <div id="footer" style="position:absolute;bottom:0;width:100%;height:60px;background:#6cf;height:auto;">
+<center>If you require any assistance, please call the ABCC head office on 02 9247 6271 or email events@britishchamber.com</center></div>   -->
+</apex:page>

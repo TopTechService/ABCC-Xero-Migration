@@ -1,0 +1,28 @@
+<apex:component controller="ContactListController" access="global">
+	<div>
+        <p><b>Converted Contact List</b></p>
+		<table border="1" cellpadding="2" style="border-collapse:collapse;">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Name</th>
+					<th>Email</th>
+				</tr>
+			</thead>
+			<tbody>
+			    <apex:variable var="index" value="{!0}" />
+				<apex:repeat value="{!ConvertedContacts}" var="con"> 
+					<tr>
+						<td><apex:variable var="index" value="{!index + 1}" /> 
+                            <apex:outputtext value="{0,number,integer}">
+                                <apex:param value="{!index}"/>
+                            </apex:outputtext>
+                        </td>
+                        <td><a href="{!baseURL}/{!con.Id}" target="_blank">{!con.Name}</a></td>
+						<td>{!con.Email}</td>
+					</tr>
+				</apex:repeat>
+			</tbody>
+		</table>
+	</div>
+</apex:component>

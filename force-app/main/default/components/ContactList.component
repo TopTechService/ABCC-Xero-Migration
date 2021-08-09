@@ -1,0 +1,31 @@
+<apex:component controller="ContactListController" access="global">
+	<div>
+        <p><b>Duplicate Contact List</b></p>
+		<table border="1" cellpadding="2" style="border-collapse:collapse;">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Name</th>
+					<th>Email</th>
+					<th>Duplicate Contact</th>
+				</tr>
+			</thead>
+			<tbody>
+			    <apex:variable var="index" value="{!0}" />
+				<apex:repeat value="{!DuplicateContacts}" var="con">
+					<tr>
+						<td>
+                            <apex:variable var="index" value="{!index + 1}" />
+                        	<apex:outputtext value="{0,number,integer}">
+                                <apex:param value="{!index}"/>
+                            </apex:outputtext>
+                        </td>
+						<td><a href="{!baseURL}/{!con.Id}" target="_blank">{!con.Name}</a></td>
+						<td>{!con.Email}</td>
+						<td><a href="{!baseURL}/{!con.Duplicate_Contact_Record__c}" target="_blank">{!con.Name}</a></td>
+					</tr>
+				</apex:repeat>
+			</tbody>
+		</table>
+	</div>
+</apex:component>

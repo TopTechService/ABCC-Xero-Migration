@@ -1,0 +1,245 @@
+<apex:page controller="EventRegistrationEditController" standardStylesheets="true" sidebar="false" showHeader="false">
+    <apex:includeScript value="{!$Resource.jquery}" />
+    <script type="text/javascript">
+        $(document).ready(function(){
+            methodOneInJavascript();
+            var eventManager = '{!eventManager}';
+            var footerText = document.getElementById('footerText');
+            if(eventManager == 'Jennifer'){
+                footerText.innerHTML = 'If you require any assistance, please call 02 9247 6271 or email events@britishchamber.com';
+            } else if (eventManager == 'Helen'){
+                footerText.innerHTML = 'If you require any assistance, please call 03 9027 5691 or email abccvic@britishchamber.com';
+            } else {
+                footerText.innerHTML = 'If you require any assistance, please call 02 9247 6271 or email abcc@britishchamber.com';
+            }
+        });   
+    </script> 
+    <Script>
+        function renderPageAndMessage1() {
+            alert('Your Changes are successfully Updated.');
+            location.reload();
+        }
+    </Script>
+    <script>
+        function validateSteps()
+        {
+            var isStepValid = true;
+              
+            if(checkcheckboxes()==true)
+            {
+                // true
+                isStepValid = true;
+                updateRecords();
+                
+            }
+            else
+            {
+                // false show error
+                isStepValid = false;
+                alert('Please fill all mandatory fields and Enter valid email address !!');
+            }
+            return isStepValid;                 
+        }
+    </script>
+    <meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <meta name="MobileOptimized" content="width" />
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <apex:includeScript value="{!$Resource.jquery}" />
+    <apex:includeScript value="{!$Resource.smartWizard}" />
+    <apex:stylesheet value="{!$Resource.smart_wizard}" />
+    <apex:stylesheet value="{!$Resource.smart_wizard_theme_arrows}" />
+    <apex:stylesheet value="{!$Resource.smart_wizard_theme_circles}" />
+    <apex:stylesheet value="{!$Resource.smart_wizard_theme_dots}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <!-- Optional Bootstrap theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous" />    
+    <style>
+        /*Features table------------------------------------------------------------*/
+        .features-table
+        {
+          width: 100%;
+          margin: 0 auto;
+          border-collapse: separate;
+          border-spacing: 0;
+          text-shadow: 0 1px 0 #fff;
+          color: #2a2a2a;
+          background: #fafafa;  
+          background-image: -moz-linear-gradient(top, #fff, #eaeaea, #fff); /* Firefox 3.6 */
+          background-image: -webkit-gradient(linear,center bottom,center top,from(#fff),color-stop(0.5, #eaeaea),to(#fff)); 
+        }
+        
+        .features-table td
+        {
+          height: 30px;
+          line-height: 30px;
+          padding: 0 3px;
+          border-bottom: 1px solid #cdcdcd;
+          box-shadow: 0 1px 0 white;
+          -moz-box-shadow: 0 1px 0 white;
+          -webkit-box-shadow: 0 1px 0 white;
+          white-space: nowrap;
+          text-align: center;
+        }
+        
+        /*Body*/
+        .features-table tbody td
+        {
+          text-align: center;
+          font: normal 12px Verdana, Arial, Helvetica;
+          width: 50px;
+        }
+        
+        .features-table tbody td:first-child
+        {
+          width: auto;
+          text-align: left;
+        }
+        
+        .features-table td:nth-child(2), .features-table td:nth-child(3)
+        {
+          background: #efefef;
+          background: rgba(144,144,144,0.15);
+          border-right: 1px solid white;
+        }
+        
+        
+        .features-table td:nth-child(4)
+        {
+          background: #e7f3d4;  
+          background: rgba(184,243,85,0.3);
+        }
+        
+        /*Header*/
+        .features-table thead td
+        {
+          font: bold 1.3em 'trebuchet MS', 'Lucida Sans', Arial;  
+          -moz-border-radius-topright: 10px;
+          -moz-border-radius-topleft: 10px; 
+          border-top-right-radius: 10px;
+          border-top-left-radius: 10px;
+          border-top: 1px solid #eaeaea; 
+        }
+        
+        .features-table thead td:first-child
+        {
+          border-top: none;
+        }
+        
+        /*Footer*/
+        .features-table tfoot td
+        {
+          font: bold 1.4em Georgia;  
+          -moz-border-radius-bottomright: 10px;
+          -moz-border-radius-bottomleft: 10px; 
+          border-bottom-right-radius: 10px;
+          border-bottom-left-radius: 10px;
+          border-bottom: 1px solid #dadada;
+        }
+        
+        .features-table tfoot td:first-child
+        {
+          border-bottom: none;
+        }
+        .classforwidth
+        {
+            width:100px;
+        }
+    </style>
+    <apex:outputPanel id="ThePage">
+        <div style="width: 80%; margin: auto;">
+        <apex:form >
+            <apex:outputPanel id="header" layout="block">
+                <!--<apex:image url="{!abccLogoURL}" style="display: block; margin: 0 auto; margin-bottom: 20px;"/>-->
+                <center><img alt="Australian British Chamber of Commerce" src="https://www.britishchamber.com/sites/britishchamber.com/files/ABCC%20Logo-min.jpg"/></center>
+            </apex:outputPanel>
+            <apex:outputPanel id="registrationTable">
+                <table class="table">
+                        <tr>
+                            <td colspan="3" style="background-color:#337ab7;padding:3px;">Event Details</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px;">Name</td>
+                            <td style="padding:3px;">When</td>
+                            <td style="padding:3px;">Where</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px;">{!opp.Event__r.Event_Name__c}</td>
+                            <td style="padding:3px;">{!eventWhen} <br/> {!eventWhenTime}</td>
+                            <td style="padding:3px;">{!eventlocation}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" bgcolor="#337ab7">Invitee Details</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table">
+                                    <tr>
+                                        <td style="padding:3px;" >First Name</td>
+                                        <td>{!opp.Primary_Contact__r.firstName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding:3px;">Last Name</td>
+                                        <td>{!opp.Primary_Contact__r.lastName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding:3px;">Email</td>
+                                        <td>{!opp.Primary_Contact__r.email}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding:3px;">Position Title</td>
+                                        <td style="padding:3px;">{!opp.Primary_Contact__r.title}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding:3px;">Company</td>
+                                        <td style="padding:3px;">{!opp.Primary_Contact__r.Company_Name__c}</td>
+                                    </tr> 
+                                    <tr>
+                                        <td style="padding:3px;">Work Phone</td>
+                                        <td style="padding:3px;">{!opp.Primary_Contact__r.phone}</td>
+                                    </tr> 
+                                    <tr>
+                                        <td style="padding:3px;">Mobile Phone</td>
+                                        <td style="padding:3px;">{!opp.Primary_Contact__r.MobilePhone}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                <table class="table">
+                                    <tr>
+                                        <td style="padding:3px;" >Address</td>
+                                        <td style="padding:3px;">{!opp.Primary_Contact__r.MailingStreet}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding:3px;"></td>
+                                        <td style="padding:3px;">{!opp.Primary_Contact__r.MailingCity}&nbsp;{!opp.Primary_Contact__r.MailingState}&nbsp;{!opp.Primary_Contact__r.MailingPostalCode}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding:3px;"></td>
+                                        <td style="padding:3px;">{!opp.Primary_Contact__r.MailingCountry}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+            </apex:outputPanel>
+            
+            <p style="background-color:#337ab7;padding:3px;"><b>Edit Your Attendee Details</b></p>
+            <apex:outputPanel id="edittable">
+                <c:RelatedAttendeeList maxTableSize="{!maxAttendees}" parentPageController="{!this}"></c:RelatedAttendeeList>
+            </apex:outputPanel>
+            <apex:outputPanel onclick="validateSteps();" style="background-color:#5bc0de" styleClass="btn btn-danger"> 
+                Save Changes
+            </apex:outputPanel>
+            <apex:actionFunction action="{!initializeAttendees}" name="methodOneInJavascript" rerender="edittable, registrationTable">
+            </apex:actionFunction>
+            <apex:actionFunction action="{!updateRecords}" name="updateRecords" oncomplete="renderPageAndMessage1()">
+            </apex:actionFunction>
+            <apex:actionFunction name="renderPageAndMessage" rerender="ThePage, TheMessage">
+            </apex:actionFunction>
+            </apex:form>
+        </div>
+    </apex:outputPanel>
+    <div id="footer" style="bottom:0;width:100%;height:60px;background:#337ab7;height:auto;"><center><p id="footerText"></p></center></div>
+</apex:page>

@@ -1,0 +1,54 @@
+<apex:page standardController="Opportunity" extensions="RefundHandlerPageController" action="{!refundAmount}" sidebar="false">
+   <style>
+ 
+   /* This is for the full screen DIV */
+   .popupBackground {
+       /* Background color */
+       background-color:grey;
+       opacity: 0.20;
+       filter: alpha(opacity = 20);
+   
+       /* Dimensions */
+       width: 100%;
+       height: 100%;
+       top: 0;
+       left: 0;
+       z-index: 998;
+       position: absolute;
+       
+       /* Mouse */
+       cursor:wait;
+   }
+    /* This is for the message DIV */
+   .PopupPanel {
+
+       /* Dimensions */
+       left: 50%;
+       width: 200px;
+       margin-left: -100px;
+       top: 50%;
+       height: 50px;
+       margin-top: -25px;
+       z-index: 999;
+       position: fixed;
+       
+       /* Mouse */
+       cursor:pointer;
+   }
+   </style>
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <head>
+            <apex:slds />
+        </head>
+        <body class="slds-scope">
+   <apex:pageBlock >
+<apex:pageMessages id="showmsg" > </apex:pageMessages>
+           <apex:form >
+        <div class="slds-p-horizontal--small slds-m-top--medium slds-size--1-of-1 slds-align--absolute-center">
+        <apex:commandButton styleClass="slds-button slds-button--neutral" value="Back to opportunity" action="{!returnToOpportunity}"/>
+        </div>
+    </apex:form>
+</apex:pageBlock>
+        </body>
+    </html>
+</apex:page>

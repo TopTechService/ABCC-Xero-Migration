@@ -1,0 +1,12 @@
+<apex:page sidebar="false" standardStylesheets="false" showHeader="false" title="Thank you!!">
+    <center>
+        <img alt="Australian British Chamber of Commerce" class="site-logo image-style-none" src="{!$Resource.PreferencePageHeader}" />
+    </center>
+    <br/>
+    <br/>
+    <hr/>
+    <center>
+        <span style="font-style:italic;font-style:bold;font-size:30px;">Thank you for taking the time to fill this form out,</span><br/>
+        <span style="font-style:italic;font-style:bold;font-size:30px;">your preferences have been saved. We hope to see you at an ABCC event in the near future.</span>
+    </center>
+</apex:page>

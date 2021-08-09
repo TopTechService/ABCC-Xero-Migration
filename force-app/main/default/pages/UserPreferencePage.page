@@ -1,0 +1,115 @@
+<apex:page showHeader="false" sidebar="false" title="Preference Page" controller="UserPreferencePageController" standardStylesheets="true">
+    <center>
+        <img alt="Australian British Chamber of Commerce" src="{!$Resource.PreferencePageHeader}" />
+    </center>
+
+    <head>
+        <script src="https://code.jquery.com/jquery-1.8.2.js" />
+        <apex:slds />
+        <style>
+        h2{
+        font-size: 12px !Important;
+        }
+         .pbTitle {
+        white-space: nowrap
+        }
+        </style>
+        <script>
+            $(document).ready(function(){
+                console.log($('[id*=myID]')[10]);
+                showOtherText($('[id*=myID]')[10]);
+                showFullListCheckbox($('[id*=myID]')[10]);
+            });
+        
+            function showFullListCheckbox(cb)
+            {
+                console.log(cb.checked);
+                console.log(cb.value);
+                if(cb.value == 'Event/Webinar Invites')
+                {
+                    if(cb.checked == true)
+                    {
+                        document.getElementById('full').style.display = 'none';
+                        document.getElementById('sectors').style.display = 'none';
+                        document.getElementById('q4').style.display = 'none';
+                        document.getElementById('q2').style.display = 'block';
+                     }
+                    else
+                    {
+                        document.getElementById('full').style.display = 'block';
+                        document.getElementById('sectors').style.display = 'block';
+                        document.getElementById('q4').style.display = 'block';
+                        document.getElementById('q2').style.display = 'none';
+                    }
+                }
+            }
+        </script>
+<!--
+<script>
+  function calculate(frst){
+  var Fname = document.getElementById(frst).value;
+  alert(Fname);
+   var res = confirm('Do you want to calculate?');
+   if(res == true)
+      Fname = 'True';
+      alert(Fname);
+  }
+ </script>
+-->
+    </head>
+    <apex:form >
+    <apex:pageBlock title="Please select your preferences below">
+        <apex:pageBlockSection columns="1">
+            <!-- Question 1 & 2 -->
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >
+                <apex:outputText ><span style="font-size:12px;">1. Please <strong>DON'T</strong> send me</span></apex:outputText>
+                     <apex:selectCheckboxes value="{!selectedMonthly}" style="margin-left: 25px;font-size:12px;" layout="pageDirection" onclick="showFullListCheckbox(this);" id="myID">
+                        <apex:selectOptions value="{!MontlyNews}"/>
+                    </apex:selectCheckboxes><br/>
+                    <div id="full" style="display:block">
+                        <apex:outputText ><span style="font-size:12px;">2. I am interested in hearing about:</span></apex:outputText>
+                        <apex:selectCheckboxes value="{!selectedEventFormats}" style="margin-left: 25px;font-size:12px;" layout="pageDirection">
+                            <apex:selectOptions value="{!EventFormats}"/>
+                        </apex:selectCheckboxes>
+                    </div>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <!-- Question 3-->
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >
+                    <div id="sectors" style="display:block">
+                <apex:outputText ><span style="font-size:12px;">3. My sectors of interest are:</span></apex:outputText>
+                     <apex:selectCheckboxes value="{!selectedIndusType}" style="margin-left: 25px;font-size:12px;" layout="pageDirection" onclick="showOtherText(this);" id="myID">
+                         <apex:selectOptions value="{!IndustryType}"/>
+                    </apex:selectCheckboxes><br/>
+                    </div>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <!-- Question 4-->
+            <apex:pageBlockSectionItem >
+                <apex:outputPanel >
+                    <div id="q4" style="display:block">
+                    <apex:outputText ><span style="font-size:12px;">4. Unless you have opted out above, we will send you event/webinar invites according to your state.</span></apex:outputText><br/>
+            		</div>
+                    <div id="q2" style="display:none">
+                    <apex:outputText ><span style="font-size:12px;">2. Unless you have opted out above, we will send you event/webinar invites according to your state.</span></apex:outputText><br/>                        
+                    </div>
+                        <apex:outputText ><span style="margin-left:16px; font-size:12px;">If you would like to hear about events in other states, click which states below:</span></apex:outputText>
+                     <apex:selectCheckboxes value="{!selectedTypeEvents}" style="margin-left: 25px;font-size:12px;" layout="pageDirection">
+                        <apex:selectOptions value="{!TypeOfEvents}"/>
+                    </apex:selectCheckboxes><br/>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <!-- Buttons -->
+        <apex:pageBlockButtons location="bottom" style="padding-left:100px !important;">
+           <apex:commandButton value="Submit Preferences" styleClass="slds-button slds-button--brand" action="{!submitResponses}"/>
+           <apex:commandButton value="Cancel" styleClass="slds-button slds-button--neutral" onclick="javascript:window.close();"/>          
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+        </apex:form>
+</apex:page>

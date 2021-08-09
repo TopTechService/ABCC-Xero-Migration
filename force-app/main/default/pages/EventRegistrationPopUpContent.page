@@ -1,0 +1,1036 @@
+<apex:page Controller="EventDetailUmangTestController" standardStylesheets="false" sidebar="false"  showHeader="false" id="mypage">
+    <!-- head section --> 
+    <head>
+        <script type="text/javascript">
+        
+        window.onload=setFocusOnLoad;
+        
+        function setFocusOnLoad() {
+            document.getElementById('firstname').focus();
+        }
+        
+
+        function stopEnterKey(evt) {
+            var evt = (evt) ? evt : ((event) ? event : null);
+            var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+            if ((evt.keyCode == 13) && (node.type == "text")) { return false; }
+        }
+        document.onkeypress = stopEnterKey;
+        
+        function isNumberKey(evt){
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57)){
+                if(charCode == 45){
+                    return true;
+                }
+                return false;
+            }
+            return true;
+        }
+        
+        $( document ).ready(function() {
+            var eventManager = '{!eventManager}';
+            var footerText = document.getElementById('footerText');
+               footerText.innerHTML = 'If you require any assistance, please call 02 9247 6271 or email events@britishchamber.com';
+         });
+        </script>
+    </head>
+    <meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <meta name="MobileOptimized" content="width" />
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <apex:includeScript value="{!$Resource.jquery}" />
+    <apex:includeScript value="{!$Resource.smartWizard}" />
+    
+    <apex:stylesheet value="{!$Resource.smart_wizard}" />
+    <apex:stylesheet value="{!$Resource.smart_wizard_theme_arrows}" />
+    <apex:stylesheet value="{!$Resource.smart_wizard_theme_circles}" />
+    <apex:stylesheet value="{!$Resource.smart_wizard_theme_dots}" />
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <!-- Optional Bootstrap theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>
+    <style>
+        .col-xs-5 {
+        width: 37.7%;
+        }
+    </style>
+    <script type="text/javascript">    
+    $(document).ready(function(){
+        document.getElementById("msg").disabled = true;
+        EnableSubmit = function(val){
+            var sbmt = document.getElementById("checks");
+            var sbmt1 = document.getElementById("btncheck");
+            if (val.checked == true)
+            {
+                sbmt.disabled = false;
+            }
+            else
+            {
+                sbmt.disabled = true;
+            }
+        }
+        
+        // Toolbar extra buttons
+        var btnFinish = $('<button></button>').text('Finish')
+        .addClass('btn btn-info')
+        .on('click', function(){ alert('Finish Clicked'); });
+        var btnCancel = $('<button id=cancel></button>').text('X')
+        .addClass('btn btn-danger')
+        .on('click', function(){
+            parent.ClosePop();
+        });        
+        
+        
+        // Step show event 
+        
+        $("#smartwizard").on("showStep", function(e, anchorObject, stepNumber, stepDirection, stepPosition) {
+            $("#myform").bind("keypress", function(e) {
+                if (e.keyCode == 13) {
+                    return false;
+                }
+            });
+            //alert("You are on step "+stepNumber+" now");
+            if(stepPosition === 'first'){
+                $("#prev-btn").addClass('disabled');
+                document.getElementById("cancel").remove();
+                var manualRegistration = '{!isItManualRegistration}';
+                if(manualRegistration == 'true'){
+                    document.getElementById("step-4").remove();
+                    document.getElementById("step4header").remove();
+                    document.getElementById("cancel").remove();
+                    $("#step-3").append('<br/><button type="button" class="btn btn-danger" onclick="joinWaitlist1();">Register</button>');
+                }
+            }else if(stepPosition === 'second'){
+                renderReviewTable();
+            }else if(stepPosition === 'third'){
+                initializeAttendees();
+                var manualRegistration = '{!isItManualRegistration}';
+                var cntx = document.getElementById('mypage:myform:registrationContext').value;
+                if(manualRegistration == 'true' || cntx == 'waitlist'){
+                    $(".sw-btn-next").addClass('disabled');
+                    //$(".sw-btn-next").("disabled", "disabled");
+                }
+            }else if(stepPosition === 'final'){
+                $("#next-btn").addClass('disabled');
+                renderReviewTable();
+            }else{
+                $("#prev-btn").removeClass('disabled');
+                $("#next-btn").removeClass('disabled');
+            }
+        });    
+        
+        // Smart Wizard
+        $('#smartwizard').smartWizard({ 
+            selected: 0, 
+            theme: 'arrows',                    
+            transitionEffect:'fade',                    
+            showStepURLhash: true,
+            toolbarSettings: {toolbarPosition: 'both',
+                              toolbarExtraButtons: [btnCancel]
+                             }                 
+        });
+        
+        
+        // Your Step validation logic
+        
+        
+        function validateEmail(email) {
+            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        }
+        
+        function validate(email) {
+            
+            var manualRegistration1 = '{!isItManualRegistration}';
+            if (manualRegistration1 == 'true' || validateEmail(email)) {
+                //valid
+                return true;
+            } else {
+                // invalid
+                return false;
+            }
+            
+        }  
+        function validateSteps(stepnumber, stepDirection)
+        {
+            var isStepValid = true;
+            // validate step 1
+            if(stepnumber == 0)
+            {                   
+                var var_firstname= document.getElementById('{!$Component.mypage.myform.firstname}');
+                var var_lastname= document.getElementById('{!$Component.mypage.myform.lastname}');
+                var var_email= document.getElementById('{!$Component.mypage.myform.email}');
+                //var var_PositionTitle= document.getElementById('{!$Component.mypage.myform.PositionTitle}');
+                var var_company= document.getElementById('{!$Component.mypage.myform.company}');
+                var var_addressline1= document.getElementById('{!$Component.mypage.myform.addressline1}');
+                // var var_addressLine2= document.getElementById('{!$Component.mypage.myform.addressLine2}');
+                var var_city= document.getElementById('{!$Component.mypage.myform.city}');
+                // var var_notes= document.getElementById('{!$Component.mypage.myform.notes}');
+                var var_country= document.getElementById('country');
+                var var_auscountry = document.getElementById('mypage:myform:country').value;
+                var var_states = document.getElementById('mypage:myform:state').value;
+                console.log(var_states );
+                console.log(var_auscountry);
+                
+                var manualRegistration1 = '{!isItManualRegistration}';
+                
+                if((var_firstname.value==null)||(var_firstname.value=='')||(((var_lastname.value==null)||(var_lastname.value=='')||(var_company.value==null)||(var_company.value=='')||(var_email.value==null)||(var_email.value=='')||((var_auscountry == 'Australia' && var_states==''))) && manualRegistration1 != 'true')){
+                    
+                    
+                    alert('Please ensure that you have completed all fields marked with an asterisk');
+                    isStepValid = false;
+                    
+                }
+                else
+                {
+                    if(validate(var_email.value)==true)
+                    {
+                        // valid email 
+                        isStepValid = true;
+                    }
+                    else
+                    {
+                        alert("Please enter a valid email address");
+                        isStepValid = false;
+                    }
+                    
+                }
+                return isStepValid;
+            }
+            else if(stepnumber == 1)
+            {
+                var radios = document.getElementsByName('rd_btn_standardprice');
+                
+                if(stepDirection == 'backward'){
+                    isStepValid =true;
+                    return isStepValid; // checked
+                }
+                for (var i = 0; i < radios.length; i++) 
+                {
+                    
+                    if (radios[i].checked==true) 
+                    {
+                        isStepValid =true;
+                        
+                        //check for ticket avaliblity
+                        var totalSeats = '{!objEvent.Total_number_of_Seats__c}';
+                        var bookedSeats = '{!objEvent.Total_No_of_Attendees__c}';
+                        var qty = document.getElementById('mypage:myform:maxAttendees').value;
+                        var manualRegistration = '{!isItManualRegistration}';
+                        if(totalSeats != null && bookedSeats != null && stepDirection == 'forward'){
+                            if((totalSeats-bookedSeats) < qty && manualRegistration != 'true'){
+                                var joinWaitlist = confirm('The Event is full. \nDo you want to join waitlist?');
+                                if(joinWaitlist){
+                                    $(".registrationContext").val('waitlist');
+                                    document.getElementById("step-4").remove();
+                                    document.getElementById("step4header").remove();
+                                    $("#step-3").append('<br/><button type="button" class="btn btn-danger" onclick="joinWaitlist1();">Join Waitlist</button>');
+                                    $("#next-btn").addClass('disabled');
+                                } else {
+                                    isStepValid = false;
+                                    parent.ClosePop();
+                                }
+                            }
+                        }
+                        
+                        return isStepValid; //if ticket available return true
+                    }
+                }
+                alert('Please select at least one Ticket type !!!');
+                isStepValid =false;
+                return isStepValid;
+                
+            }
+                else if(stepnumber == 2)
+                {
+                    var manualRegistration = '{!isItManualRegistration}';
+                    var cntx = document.getElementById('mypage:myform:registrationContext').value;
+                    if((manualRegistration == 'true' || cntx == 'waitlist') && stepDirection=='forward'){
+                        return false;
+                    }
+                    if(checkcheckboxes()==true || stepDirection=='backward')
+                    {
+                        // true
+                        isStepValid = true;
+                        
+                    }
+                    else
+                    {
+                        // false show error
+                        isStepValid = false;
+                        alert('Please ensure that you have completed all fields marked with an asterisk');
+                    }
+                    return isStepValid;
+                }
+            
+        }
+        
+        $("#smartwizard").on("leaveStep", function(e, anchorObject, stepNumber, stepDirection) {
+            
+            return validateSteps(stepNumber, stepDirection); 
+            
+        });
+        
+        // External Button Events
+        $("#reset-btn").on("click", function() {
+            // Reset wizard
+            $('#smartwizard').smartWizard("reset");
+            return true;
+        });
+        
+        $("#prev-btn").on("click", function() {
+            // Navigate previous
+            $('#smartwizard').smartWizard("prev");
+            return true;
+        });
+        
+        $("#next-btn").on("click", function() {
+            // Navigate next
+            $('#smartwizard').smartWizard("next");
+            return true;
+        });
+        
+        $("#theme_selector").on("change", function() {
+            // Change theme
+            $('#smartwizard').smartWizard("theme", $(this).val());
+            return true;
+        });
+        
+        // Set selected theme on page refresh
+        $("#theme_selector").change();
+    });
+    
+    $("#check").on("disabled", function(){
+        
+        $('#btncheck').attr("disabled",false);
+    }); 
+    function abc(x, y){
+        alert('abc');
+        return true;    
+    }
+    function joinWaitlist1(){
+        var valid = false;
+        if(checkcheckboxes()==true)
+        {
+            // true
+            valid = true;
+            methodOneInJavascript();
+        }
+        else
+        {
+            // false show error
+            valid = false;
+            alert('Please ensure that you have completed all fields marked with an asterisk and Enter valid email address !!');
+        }
+    }
+    </script>  
+    <script>
+    function handleRadioClick(myRadio,ItemType,UnitPrice,SelectedPacakgeName) {
+        
+        //alert('New value: ' + myRadio.value);
+        // alert('Item Type' + ItemType);
+        calculatePrice(UnitPrice,ItemType,SelectedPacakgeName);
+        
+    }
+    </script>
+    <script>
+    function HideMsg(istrue)
+    {
+        var checkval = document.getElementById("msg")
+        if(istrue.checked )
+        {       
+            var checkval = document.getElementById("msg").disabled = false;
+            
+        }
+        else
+        {
+            var checkval = document.getElementById("msg").disabled = true;
+        }
+    }
+    function disableButton()
+    {
+        var ldiv = document.getElementById('LoadingDiv');
+        ldiv.style.display='block';
+    }
+    function enableButton()
+    {
+        var ldiv = document.getElementById('LoadingDiv');
+        ldiv.style.display = 'none';    
+    }
+    function redirectToPayment(){
+        var cntx = document.getElementById('mypage:myform:registrationContext').value;
+        var manualRegistration = '{!isItManualRegistration}';
+        if(cntx == 'waitlist'){
+            sendEmailToEventManager();
+            parent.ClosePop();
+        } else if(manualRegistration == 'true') {
+            var opportunityLink = document.getElementById('mypage:myform:opportunityLink').value;
+            window.top.location.replace(opportunityLink);
+        } else {
+            var redirectionLink = document.getElementById('mypage:myform:redirectionLink').value;
+            window.top.location.replace(redirectionLink);
+        }
+    }
+    
+    function updateCountryValue(){
+        
+        rerenderCountry();
+        if( document.getElementById('mypage:myform:country').value == "Australia"){
+            document.getElementById('mypage:myform:state').disabled=false;
+        }
+        else{
+            document.getElementById('mypage:myform:state').disabled=true;
+            document.getElementById('mypage:myform:state').value='';
+        }
+    }
+    </script>
+    
+    
+    
+    
+    <style>
+        /*Features table------------------------------------------------------------*/
+        .features-table
+        {
+        width: 100%;
+        margin: 0 auto;
+        border-collapse: separate;
+        border-spacing: 0;
+        text-shadow: 0 1px 0 #fff;
+        color: #2a2a2a;
+        background: #fafafa;  
+        background-image: -moz-linear-gradient(top, #fff, #eaeaea, #fff); /* Firefox 3.6 */
+        background-image: -webkit-gradient(linear,center bottom,center top,from(#fff),color-stop(0.5, #eaeaea),to(#fff)); 
+        }
+        
+        .features-table td
+        {
+        height: 30px;
+        line-height: 10px;
+        padding: 0 10px;
+        border-bottom: 1px solid #cdcdcd;
+        box-shadow: 0 1px 0 white;
+        -moz-box-shadow: 0 1px 0 white;
+        -webkit-box-shadow: 0 1px 0 white;
+        white-space: nowrap;
+        text-align: center;
+        }
+        
+        /*Body*/
+        .features-table tbody td
+        {
+        text-align: center;
+        font: normal 12px Verdana, Arial, Helvetica;
+        width: 100px;
+        }
+        
+        .features-table tbody td:first-child
+        {
+        width: auto;
+        text-align: left;
+        }
+        
+        .features-table td:nth-child(2), .features-table td:nth-child(3)
+        {
+        background: #efefef;
+        background: rgba(144,144,144,0.15);
+        border-right: 1px solid white;
+        }
+        
+        
+        .features-table td:nth-child(4)
+        {
+        background: #e7f3d4;  
+        background: rgba(184,243,85,0.3);
+        }
+        
+        /*Header*/
+        .features-table thead td
+        {
+        font: bold 1.3em 'trebuchet MS', 'Lucida Sans', Arial;  
+        -moz-border-radius-topright: 10px;
+        -moz-border-radius-topleft: 10px; 
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+        border-top: 1px solid #eaeaea; 
+        }
+        
+        .features-table thead td:first-child
+        {
+        border-top: none;
+        }
+        
+        /*Footer*/
+        .features-table tfoot td
+        {
+        font: bold 1.4em Georgia;  
+        -moz-border-radius-bottomright: 10px;
+        -moz-border-radius-bottomleft: 10px; 
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-bottom: 1px solid #dadada;
+        }
+        
+        .features-table tfoot td:first-child
+        {
+        border-bottom: none;
+        }
+        .form-control
+        {
+        width: 95% !important;
+        }
+        #LoadingDiv{
+        margin:0px 0px 0px 0px;
+        position:fixed;
+        height: 100%;
+        z-index:9999;
+        padding-top:15%;
+        padding-left:45%;
+        width:100%;------
+        clear:none;
+        background:none;
+        /*background-color:#666666;
+        border:1px solid #000000;*/
+        }
+        /*IE will need an 'adjustment'*/
+        * html #LoadingDiv{
+        position: absolute;
+        height: expression(document.body.scrollHeight > document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');
+        }
+        .wizardSection {width:890px;height:500px;max-width:900px;max-height:500px;}
+        .add-notes-row, .hrMobile {display:none;}
+        
+        @media (max-width:768px){
+            .wizardSection {width:100%; height: unset; max-width: 100%; max-height: unset; padding: 10px;}
+            .sw-theme-arrows > ul.step-anchor { background: #f5f5f5 !important; display: flex; border-radius:0;}
+            .sw-theme-arrows > ul.step-anchor > li.active  { border-color: #5bc0de !important; color: #fff !important; background: #5bc0de !important; }
+            .sw-theme-arrows > ul.step-anchor > li > a { font-size: 12px; text-align: center; padding: 10px 5px !important;}
+            .sw-theme-arrows > ul.step-anchor > li  {width:25%;}
+            .mobileStep {font-size:13px; padding: 10px; text-align: center; display:none;}
+            .sw-theme-arrows > ul.step-anchor > li > a, .sw-theme-arrows > ul.step-anchor > li > a:hover {padding-left: 0; margin-right: 0; margin-bottom: 0;}
+            .col-sm-4, .col-sm-2, .col-sm-1, .col-sm-3 {padding:0;}
+            .row { margin-right: 0; margin-left: 0; }
+            .form-control { width: 100% !important;}
+            .col-sm-4 { padding: 0 0 12px; }
+            .stepStyle br{ display:none;}
+            .stepStyle input[type="radio"] { margin: 0; vertical-align: middle; }
+            span.discountLabel { display: block; }
+            .discountDiv .btn.btn-danger { position: absolute; right: 10px; }
+            span.discountDiv { padding-right: 70px; display: block; }
+            .discountDiv input[type="text"] { width: 100%; height: 34px; }
+            .step2Tble {width:100%;}
+            span.nwrDiv { display: flex; border-bottom: 1px solid #eee; }
+            .nwrHead { width: 70px !important; }
+            .nwrTable { width: 100% !important; }
+            .add-notes-row, .hrMobile {display:block;}
+            table.features-table td input { vertical-align: middle; margin: 0; }
+            .inviteeDetails, .mobileRow {display:none;}
+            .row.attendeeRow .dataLabel:before { content: attr(data-label); display: block; }
+            .sw-theme-arrows > ul.step-anchor > li.done > a {height:100%;}
+            .dataLabel { border-bottom: 1px solid #eee; margin-bottom: 10px; padding-bottom: 5px; }
+        
+        }
+    </style>
+    <!-- End of head section -->
+    <apex:form id="myform">
+        <apex:actionfunction name="calculatePrice" action="{!CalcluateCost}" reRender="pnlGroupDiscount,pnlPurchaseType,pnlAttendeeController" status="status_message">
+            <apex:param name="UnitPrice" assignTo="{!UnitPrice}" value="{!UnitPrice}" />
+            <apex:param name="PurchaseType" assignTo="{!PurchaseType}" value="{!PurchaseType}"/>
+            <apex:param name="SelectedPacakgeName" assignTo="{!SelectedPacakgeName}" value="{!SelectedPacakgeName}"/>
+        </apex:actionfunction>
+        <apex:actionfunction name="applyDiscountCode" action="{!applyDiscountCode}" reRender="pnlPurchaseType,pnlAttendeeController,discountCode"></apex:actionfunction>
+        <apex:actionfunction name="searchfromEmail" action="{!searchbasedOnEmail}" oncomplete="recreateEarlyBirdRows(),updateCountryValue()" reRender="addressline1,addressline2,city,PositionTitle,state,country,workphone,MobilePhone,Postal-Code,firstname,lastname,company" status="status_message"></apex:actionfunction>
+        <apex:actionfunction name="recreateEarlyBirdRows" action="{!recreateEarlyBirdRows}" reRender="priceTable"></apex:actionfunction>
+        <apex:actionFunction name="initializeAttendees" action="{!initializeAttendees}" reRender="reviewTable,{!$Component.mypage:myform:j_id112:j_id113:AttendeeList}"/>
+        <apex:actionFunction name="renderReviewTable" reRender="reviewTable"/>
+        <apex:actionFunction name="renderAttendeeTable" reRender="pnlAttendeeController"/>
+        <apex:actionFunction name="sendEmailToEventManager" action="{!waitListAttendeeEmail}"/>
+        <apex:actionFunction name="rerenderCountry" reRender="country"/>
+        <apex:actionStatus id="status_message" onStart="disableButton();" onStop="enableButton();"/>
+        
+        <div id="wizardContainer"  class="wizardSection" style="">
+            <apex:inputTextarea id="registrationContext" value="{!registrationContext}" styleClass="registrationContext" style="display:none;"/>
+            <apex:inputHidden id="opportunityLink" value="{!opportunityLink}"/>
+            <apex:inputHidden id="countryhidden" value="{!objIn.country}"/>
+            <apex:inputHidden id="redirectionLink" value="{!redirectionLink}"/>
+            <div id="smartwizard">
+                <ul>
+                    <li><a href="#step-1">Primary  Contact  Details<br /><small><br/><br/><br/></small><span class="mobileStep">1</span></a></li>
+                    <li><a href="#step-2">Select Tickets<br /><small><br/><br/><br/></small><span class="mobileStep">2</span></a></li>
+                    <li><a href="#step-3">Guest Details<br /><small>(if applicable) and <br/> Dietary Requirements<br/><br/></small><span class="mobileStep">3</span></a></li>
+                    <li id="step4header"><a href="#step-4">Review Information<br /><small>and <br />Payment<br/><br/></small><span class="mobileStep">4</span></a></li>
+                </ul>
+                <div style="font-size:13px;">
+                    <div id="LoadingDiv" style="display:none;">
+                        <!--<apex:image url="/servlet/servlet.FileDownload?file=0156F00000DVbSv"/>-->
+                        <apex:image url="/img/loading.gif"/>
+                    </div>
+                    <div id="step-1" class="stepStyle">
+                        <b>Details of Booking Contact</b>
+                        <br/>(You may not be the person attending the event)<br/><br/>
+                        <div height="100%" class="stepStyle">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="firstname" value="First Name"></apex:outputLabel><font style ="display:inline;" color="red"> *</font>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="firstname" style="display:inline;" styleClass="form-control" value="{!objIn.firstname}"  /><br/>
+                                </div>
+                                <div class="col-sm-2">
+                                    <apex:outputLabel value="Last Name"></apex:outputLabel><font color="red">*</font>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="lastname" styleClass="form-control" style="display:inline;" value="{!objIn.lastname}"  />
+                                </div>
+                            </div><br/>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <apex:outputLabel value="Email" ></apex:outputLabel><font color="red">*</font>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="email" styleClass="form-control" style="display:inline;" value="{!objIn.email}" onblur="searchfromEmail()" />
+                                </div>
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="PositionTitle" value="Job Title"></apex:outputLabel>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="PositionTitle" styleClass="form-control" style="display:inline;" value="{!objIn.positionTitle}"  />
+                                </div>
+                            </div><br/>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="company" value="Company"></apex:outputLabel><font color="red">*</font>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="company"  styleClass="form-control"  style="display:inline;" value="{!objIn.company}" />
+                                </div>
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="addressLine1" value="Address Line 1 "></apex:outputLabel>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="addressline1" styleClass="form-control" style="display:inline;" value="{!objIn.addressline1}" />
+                                </div>
+                            </div><br/>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="addressLine2" value="Address Line 2 "></apex:outputLabel>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="addressline2"  styleClass="form-control" style="display:inline;" value="{!objIn.addressline2}"  />
+                                </div>
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="city" value="City"></apex:outputLabel>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="city" styleClass="form-control" style="display:inline;" value="{!objIn.city}"  />
+                                </div>
+                            </div><br/>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="Postal-Code" value="Postal Code"></apex:outputLabel>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="Postal-Code" styleClass="form-control" style="display:inline;" value="{!objIn.PostalCode }"  />
+                                </div>
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="Country" value="Country"></apex:outputLabel><font color="red">*</font>
+                                </div>
+                                <div class="col-sm-4">
+                                    <!--<apex:inputText id="country" styleClass="form-control" style="display:inline;" value="{!objIn.country}"  />-->
+                                    <apex:selectList id="country" value="{!objIn.country}" styleClass="form-control" style="display:inline;" onchange="updateCountryValue()" size="1">
+                                        <apex:selectOptions value="{!avaiableCountry}"/>
+                                    </apex:selectList>
+                                </div>
+                            </div><br/>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="state" value="State"></apex:outputLabel><font color="red">*</font>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:selectList value="{!objIn.state}" id="state" styleClass="form-control" style="display:inline;" size="1">
+                                        <apex:selectOptions value="{!avaiableStates}"/>
+                                    </apex:selectList>
+                                </div>
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="notes" value="Notes"></apex:outputLabel>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="notes" styleClass="form-control" style="display:inline;" value="{!objIn.notes}"  />
+                                </div>
+                            </div><br/>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="workphone" value="Work Phone"></apex:outputLabel>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="workphone" styleClass="form-control" style="display:inline;" value="{!objIn.workphone}"  />
+                                </div>
+                                <div class="col-sm-2">
+                                    <apex:outputLabel for="MobilePhone" value="Mobile Phone"></apex:outputLabel>
+                                </div>
+                                <div class="col-sm-4">
+                                    <apex:inputText id="MobilePhone" styleClass="form-control" style="display:inline;" value="{!objIn.MobilePhone}"  />
+                                </div>
+                            </div><br/>
+                        </div>
+                    </div>
+                    <div id="step-2" class="">
+                        <div>
+                            <table style="margin:auto" class="step2Tble"> 
+                                <tr>
+                                    <td><b>Select Ticket Type<br/>(These prices include GST)</b><br /><br /></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <apex:outputPanel id="priceTable">
+                                            <table class="features-table">
+                                                <tr>
+                                                    <td><b>Package</b></td>
+                                                    <apex:repeat value="{!setHeader}" var="h">
+                                                        <td><b><apex:outputLabel value="{!h}"  escape="false"  ></apex:outputLabel> </b></td>
+                                                    </apex:repeat>
+                                                    <td><b>Standard Price</b></td>
+                                                </tr>
+                                                <apex:repeat value="{!lstEarlyBirdRows}" var="objRow"> 
+                                                    <tr> 
+                                                        <td>{!objRow.packageName} </td>     
+                                                        <apex:repeat value="{!objRow.lstEarlyDatePrice}" var="objCol"> 
+                                                            <td>
+                                                                <apex:outputPanel rendered="{!!objCol.IsValid}">{!objCol.discountedPrice} </apex:outputPanel>
+                                                                <apex:outputPanel rendered="{!objCol.IsValid}">
+                                                                    <label class="">
+                                                                        <input type="radio" id="rd_btn_standardprice" 
+                                                                               onclick="handleRadioClick(this,'{!objCol.TicketType}','{!objCol.discountedPrice}','{!objRow.packageName}');"
+                                                                               name="rd_btn_standardprice" />
+                                                                        {!objCol.discountedPrice}
+                                                                    </label>
+                                                                </apex:outputPanel>
+                                                            </td>
+                                                        </apex:repeat> 
+                                                    </tr>
+                                                </apex:repeat>
+                                            </table>
+                                            <br/>
+                                            <apex:outputText label="Discount :" value="Discount Code :" rendered="{!isDiscountCode}" styleClass="discountLabel"></apex:outputText> 
+                                            <span class="discountDiv">
+                                                <apex:inputText value="{!discountCode}" rendered="{!isDiscountCode}"/>
+                                                <apex:outputPanel onclick="applyDiscountCode();" style="background-color:#b92c28" styleClass="btn btn-danger" rendered="{!isDiscountCode}"> 
+                                                    Apply <br/>
+                                                </apex:outputPanel>
+                                            </span>
+                                            
+                                            <apex:outputPanel rendered="{!isItManualRegistration}">
+                                                <br/>
+                                                <apex:outputText value="Already Paid"></apex:outputText>&nbsp;&nbsp;
+                                                <apex:inputCheckbox value="{!alreadyPaid}"/>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="height:20px"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <apex:outputPanel id="pnlGroupDiscount">  
+                                            <apex:outputPanel rendered="{!IsGroupDiscountVisible}">
+                                                <table style="width:100%"  class="features-table">
+                                                    <tr>
+                                                        <td style="width:15%">Count of {!PurchaseType}</td>
+                                                        <td style="width:75%">Discount (Group Discount is on top of Early Bird) </td>
+                                                        <td style="width:10%">Discount Amount</td>
+                                                    </tr>
+                                                    <apex:repeat value="{!lstGroupDiscountRows}" var="objRow"> 
+                                                        <tr>
+                                                            <td> >= {!objRow.Count}</td>
+                                                            <td>
+                                                                <div class="progress">
+                                                                    <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:{!objRow.progressBarWidth}%">
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>${!objRow.FixedDiscount}</td>
+                                                        </tr>
+                                                    </apex:repeat>
+                                                </table>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="height:20px"></td>
+                                </tr>
+                                <tr>
+                                    <td align="right" >
+                                        <apex:outputPanel id="pnlPurchaseType"> 
+                                            <table stlye="width:100%" class="qtyTable">
+                                                <tr>
+                                                    <td style="text-align:right" >Quantity</td>
+                                                    <td style="text-align:right" >
+                                                        <apex:selectList value="{!objIn.selectedPurchaseQuantity }" size="1">
+                                                            <apex:selectOptions value="{!lstQunaity}"></apex:selectOptions>
+                                                            <apex:actionSupport event="onchange" action="{!CalcluateCost}"
+                                                                                reRender="pnlPurchaseType,pnlAttendeeController,finalCost" status="status_message">
+                                                                <apex:param name="UnitPrice" assignTo="{!UnitPrice}" value="{!UnitPrice}"/>
+                                                                <apex:param name="PurchaseType" assignTo="{!PurchaseType}" value="{!PurchaseType}"/>
+                                                                <apex:param name="SelectedPacakgeName" assignTo="{!SelectedPacakgeName}" value="{!SelectedPacakgeName}"/>
+                                                            </apex:actionSupport>
+                                                        </apex:selectList> 
+                                                        <apex:inputHidden value="{!maxAttendees}" id="maxAttendees"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">Your Purchase Price: <b>{!objIn.currentPriceOfPurchase} </b> </td>
+                                                </tr>
+                                            </table>
+                                        </apex:outputPanel> 
+                                    </td>   
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="step-3" class="">                       
+                        <apex:outputPanel id="pnlAttendeeController">                           
+                            <c:RelatedAttendeeList maxTableSize="{!maxAttendees}" parentPageController="{!this}"></c:RelatedAttendeeList>
+                        </apex:outputPanel>
+                    </div>
+                    <div class="" id="step-4">
+                        <b>Review Your Information</b>
+                        <br/>
+                        <apex:outputPanel Id="reviewTable">
+                            <div>                   
+                                <div class="row" style='width:auto;'>
+                                    <div class="col-sm-12" style='background-color :#337ab7;border :1px;'>
+                                        <apex:outputText value="Event Detail" style="color: white;"></apex:outputText>
+                                    </div>
+                                </div>
+                                <br/>
+                                <span class="nwrDiv">
+                                <div class="row nwrHead" style='width:auto;'>
+                                    <div class="col-sm-4" >
+                                        <apex:outputText value="Name" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <apex:outputText value="When"  ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <apex:outputText value="Where" ></apex:outputText>
+                                    </div>
+                                </div>
+                                <hr class="mobileHr" style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;'/>
+                                <div class="row nwrTable" style='width:auto;'>
+                                    <div class="col-sm-4" >
+                                        <apex:outputText value="{!eventDetail.eventName}" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <apex:outputText value="{!eventDetail.eventWhen}  {!eventDetail.eventWhenTime}"  ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <apex:outputText value="{!eventDetail.eventlocation}" ></apex:outputText>
+                                    </div>
+                                </div>
+                                </span>
+                                <br/>
+                                <div class="row" style='width:auto;'>
+                                    <div class="col-sm-12" style='background-color :#337ab7;border :1px;'>
+                                        <apex:outputText value="Invitee Detail" style="color: white;"></apex:outputText>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row" style='width:auto;'>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="First Name" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="{!objIn.FirstName}"  ></apex:outputText>
+                                    </div>
+                                    
+                                    <div class="col-sm-3 inviteeDetails" >
+                                        <apex:outputText value="Address" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3 inviteeDetails" >
+                                        <apex:outputText value="{!objIn.addressLine1} {!objIn.addressLine2}" ></apex:outputText>
+                                    </div>
+                                </div>
+                                <hr style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;'/>
+                                <div class="row">
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="Last Name" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="{!objIn.LastName}" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3 inviteeDetails" >
+                                        <apex:outputText value="" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3 inviteeDetails" >
+                                        <apex:outputText value="{!objIn.city}" ></apex:outputText>
+                                    </div>
+                                </div>
+                                <hr style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;'/>
+                                <div class="row">
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="Email" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="{!objIn.email}"  ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3 inviteeDetails" >
+                                        <apex:outputText value=""  ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3 inviteeDetails" >
+                                        <apex:outputText value="{!objIn.State} {!objIn.PostalCode}"  ></apex:outputText>
+                                    </div>
+                                </div>
+                                <hr style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;'/>
+                                <div class="row">
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="Job Title" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="{!objIn.positionTitle}"  ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3 inviteeDetails" >
+                                        <apex:outputText value="Notes"  ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3 inviteeDetails" >
+                                        <apex:outputText value="{!objIn.notes}"  ></apex:outputText>
+                                    </div>
+                                </div>
+                                <hr style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;'/>
+                                <div class="row">
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="Company" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="{!objIn.company}"  ></apex:outputText>
+                                    </div>
+                                </div>
+                                <hr style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;'/>
+                                <div class="row">
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="Work Phone" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="{!objIn.workphone}"  ></apex:outputText>
+                                    </div>
+                                </div>
+                                <hr style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;'/>
+                                <div class="row">
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="Mobile Phone" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="{!objIn.Mobilephone}"  ></apex:outputText>
+                                    </div>
+                                </div>
+                                <hr style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;' class="hrMobile"/>
+                                
+                                <div class="row add-notes-row">
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="Address" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="{!objIn.addressLine1} {!objIn.addressLine2}" ></apex:outputText>
+                                        <apex:outputText value="{!objIn.city}" ></apex:outputText>
+                                        <apex:outputText value="{!objIn.State} {!objIn.PostalCode}"  ></apex:outputText>
+                                    </div>
+                                    <hr style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;' class=""/>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="Notes"  ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="{!objIn.notes}"  ></apex:outputText>
+                                    </div>
+                                </div>
+                                <hr style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;' class="hrMobile"/>
+                                <br/>
+                                <div class="row" style='width:auto;' >
+                                    <div class="col-sm-12" style='background-color :#337ab7;border :1px;'>
+                                        <apex:outputText value="Attendee Detail" style="color: white;"></apex:outputText>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row mobileRow" style='width:auto;'>
+                                    <div class="col-sm-1" >
+                                        <apex:outputText value="" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-1" >
+                                        <apex:outputText value="First Name"  ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-1" >
+                                        <apex:outputText value="Last Name" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <apex:outputText value="Email" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-2" >
+                                        <apex:outputText value="Company" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-2" >
+                                        <apex:outputText value="Position Title" ></apex:outputText>
+                                    </div>
+                                    <div class="col-sm-2" >
+                                        <apex:outputText value="Dietary Requirements" ></apex:outputText>
+                                    </div>
+                                </div>
+                                <hr style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;'/>
+                                <apex:variable var="rowNum" value="{!1}" />
+                                <apex:repeat value="{!AttendeeList}" var="key">
+                                    <apex:repeat value="{!AttendeeList[key]}" var="Attendee">
+                                        <div class="row attendeeRow">
+                                            <div class="col-sm-1 dataLabel" data-label="" >
+                                                <apex:outputText value="{!rowNum}" ></apex:outputText>
+                                            </div>
+                                            <div class="col-sm-1 dataLabel" data-label="First Name">
+                                                <apex:outputText value="{!Attendee.firstName}"  ></apex:outputText>
+                                            </div>
+                                            <div class="col-sm-1 dataLabel" data-label="Last Name">
+                                                <apex:outputText value="{!Attendee.lastName}" ></apex:outputText>
+                                            </div>
+                                            <div class="col-sm-3 dataLabel" data-label="Email">
+                                                <apex:outputText value="{!Attendee.email}" ></apex:outputText>
+                                            </div>
+                                            <div class="col-sm-2 dataLabel" data-label="Company">
+                                                <apex:outputText value="{!Attendee.company}" ></apex:outputText>
+                                            </div>
+                                            <div class="col-sm-2 dataLabel" data-label="Position Title">
+                                                <apex:outputText value="{!Attendee.positionTitle}" ></apex:outputText>
+                                            </div>
+                                            <div class="col-sm-2 dataLabel" data-label="Dietary Requirements">
+                                                <apex:outputText value="{!Attendee.Dietary_Req}" ></apex:outputText>
+                                            </div>
+                                        </div>
+                                        <hr style='border-width: 1px;margin-top: 10px; margin-bottom: 10px;'/>
+                                        
+                                        <apex:variable value="{!rowNum + 1}" var="rowNum"/> 
+                                    </apex:repeat>
+                                </apex:repeat>
+                            </div>
+                            <apex:outputPanel >
+                                <hr style=' border: 0;height: 1px;background: #333;margin-top: 10px; margin-bottom: 10px;'/> 
+                                <apex:inputcheckbox id="checks" value="{!isCheck }" onchange="HideMsg(this);"/>
+                                I accept the <a href="{!$Page.Ticket_TC}" target="_blank">Terms and Conditions<br/><br/></a>
+                            </apex:outputPanel>
+                            <apex:pageBlock rendered="{!if(objIn.currentPriceOfPurchase='$0.00'|| objIn.currentPriceOfPurchase='$0',false,true)}">
+                                <fieldset id='msg' disabled = 'true'>
+                                    <button type="button" class="btn btn-danger" onclick="this.disabled=true;methodOneInJavascript();" style="background-color:##ffccd4" id="btncheck">Pay Now</button>
+                                </fieldset>
+                            </apex:pageBlock>   
+                            
+                            <apex:pageBlock rendered="{!if(objIn.currentPriceOfPurchase='$0.00'|| objIn.currentPriceOfPurchase='$0',true,false)}">
+                                <fieldset id='msg' disabled = 'true'>
+                                    <button type="button" class="btn btn-success" onclick="this.disabled=true;methodOneInJavascript();" style="background-color:##ffccd4" id="btncheck">Register</button>
+                                </fieldset>
+                            </apex:pageBlock>   
+                            <apex:actionFunction action="{!saveRecord}" name="methodOneInJavascript" oncomplete="redirectToPayment();" reRender="mypage:myform:opportunityLink,mypage:myform:redirectionLink" status="status_message"></apex:actionFunction>
+                        </apex:outputPanel>
+                    </div>
+                </div>
+            </div>
+            <div id="footer"><center><p id="footerText"></p></center></div>
+        </div>
+    </apex:form>
+</apex:page>

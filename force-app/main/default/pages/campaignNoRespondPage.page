@@ -1,0 +1,11 @@
+<apex:page sidebar="false" standardStylesheets="false" showHeader="false" title="Thank you!!">
+    <!-- https://c.cs6.visual.force.com/apex/campaignRespondPage?id=00v9000000Efv3AAAR&response=yes -->
+    <center>
+        <img alt="Australian British Chamber of Commerce" class="site-logo image-style-none" src="https://www.britishchamber.com/sites/all/themes/abcc/logo.png" typeof="foaf:Image"/>
+    </center>
+    <br/>
+    <br/>
+    <center>
+        <span style="font-style:italic;font-style:bold;font-size:20px;">Thank you for your response.</span>
+    </center>
+</apex:page>

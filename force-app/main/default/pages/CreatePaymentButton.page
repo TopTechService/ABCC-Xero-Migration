@@ -1,0 +1,3 @@
+<apex:page controller="CreatePaymentButtonController" action="{!createPayment}">
+	
+</apex:page>

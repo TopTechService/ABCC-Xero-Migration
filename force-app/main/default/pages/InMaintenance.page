@@ -1,0 +1,21 @@
+<apex:page showHeader="false" title="{!$Label.Site_In_Maintenance}" cache="false">
+  <apex:composition template="StdExceptionTemplate">
+    <apex:define name="icon">
+      <apex:image url="{!URLFOR($Resource.SiteSamples, 'img/warning.png')}"/>
+    </apex:define>
+    <apex:define name="error">
+      <apex:outputText escape="false" styleClass="title" value="{!$Label.Site_In_Maintenance}">
+        <apex:param value="{!$Site.BaseUrl}"/>
+      </apex:outputText>
+      <br/>
+      <br/>
+      <apex:outputText value="{!$Label.site.sorry_for_inconvenience_back_shortly}"/>
+      <br/>
+      <br/>
+      <apex:outputText escape="false" value=" {!$Label.site.get_in_touch}">
+      <apex:param value="mailto:{!HTMLENCODE($Label.Contact_Us_Email)}"/>
+      <apex:param value="{!$Label.site.email_us}"/>
+    </apex:outputText>
+   </apex:define>
+  </apex:composition>
+</apex:page>

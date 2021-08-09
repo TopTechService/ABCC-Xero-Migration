@@ -1,0 +1,289 @@
+<apex:page controller="PaymentTestPageController" sidebar="false" showHeader="false" standardStylesheets="false" id="paymentPage">
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+
+        <style>
+            .cardType td {position:relative;}
+            td { position: relative; }
+            .cardType td label { width: 100%; height: 100%; text-align: center; margin: 0; min-height: 100%; padding: 8px 15px; vertical-align: middle; line-height: normal; }
+            table.cardType td input[type="radio"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 100%; height: 100%; display: block; position: absolute; top: 0; margin: 0;}
+            .cardType td { position: relative; vertical-align: middle; padding-right: 5px; border: 1px solid #ccc; }
+        	table.cardType td input[type="radio"]:focus,
+            table.cardType td input[type="radio"]:hover {outline:0;}
+            table.cardType td input[type="radio"]:checked { border: 1px solid #5cb85c; box-shadow: 0 0 0 1px #5cb85c; }
+            .col-centered {width:100%;}
+           
+        	@media (max-width:991px){
+            	.img-responsive {max-width: 100%; margin-left: auto;}
+            }
+            
+            @media (min-width: 768px){
+            	.container {  max-width:750px; }
+            	.logo { max-width: 185px; margin-bottom: 10px; margin-top: 15px; }
+            }
+            
+            @media (max-width:768px){
+            	.form-control:focus {box-shadow:none; border:0 none; border:1px solid #ccc;}
+            	
+            }
+            
+            @media (max-width:750px){
+            	.logo { max-width: 185px; }
+            	.cardType td label {font-size:14px; padding: 8px 10px;}
+            	table.cardType {width:100%;}
+            	.form-control:focus {border:1px solid #ccc; box-shadow:none; outline:0;}
+
+            }
+            
+        </style>
+    </head>
+   
+    <center><img alt="Australian British Chamber of Commerce" class="logo" src="https://www.britishchamber.com/sites/all/themes/abcc/logo.png"/></center>
+    
+    <div class="container">
+        <div class="row">
+            <!-- You can make it whatever width you want. I'm making it full width
+			on <= small devices and 4/12 page width on >= medium devices -->
+            <div class="col-xs-12 col-md-4 col-centered">
+                <!-- CREDIT CARD FORM STARTS HERE -->
+                <div class="panel panel-default credit-card-box">
+                    <div class="panel-heading display-table" >
+                        <div class="row display-tr" >
+                            <h3 class="panel-title display-td" >&nbsp;&nbsp;Payment Details</h3>
+                            <div class="display-td">
+                                <div class="row">
+                                    <div class="col-xs-6"><b>&nbsp;&nbsp;Amount Due: <br/> &nbsp;&nbsp;{!amountDue}</b></div>
+                                    <div class="col-xs-6"><apex:image id="cardTypeImg" value="{!$Resource.CreditCardType}" styleClass="img-responsive"/></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <apex:form id="paymentForm">
+                            <apex:inputHidden id="redirectionLink" value="{!redirectionLink}"/>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-group">
+                                        <label for="cardType">CARD TYPE</label>
+                                        <div class="input-group">
+                                            <span class="">
+                                                <apex:selectRadio value="{!cardType1}" onchange="reRenderOut()" styleClass="cardType">
+                                                    <apex:selectOptions value="{!items}"/>
+                                                </apex:selectRadio>
+                                            </span>
+                                            <apex:actionFunction action="{!test}" rerender="out" name="reRenderOut" oncomplete="showSurchargeMsg()"/>
+                                            <apex:outputText value="{!cardType1}" id="out" style="display:none"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="display:none;" id="amexDiv">
+                                <div class="col-xs-12" style="color: blue;">
+                                    You will be charged 4.35% surchage for card type American Express<br/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-group">
+                                        <label for="cardName">NAME ON CARD</label>
+                                        <div class="input-group elementParent">
+                                            <apex:inputText value="{!cardName}"
+                                                            id="cardName"
+                                                            styleClass="form-control"
+                                                            html-name="cardName"
+                                                            html-placeholder="Name On Card"
+                                                            />
+                                            <span class="input-group-addon"><i class="fa fa-credit-card"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-group">
+                                        <label for="cardNumber">CARD NUMBER</label>
+                                        <div class="input-group elementParent">
+                                            <apex:inputText value="{!cardNumber}"
+                                                            id="cardNumber"
+                                                            styleClass="form-control"
+                                                            html-name="cardNumber"
+                                                            html-placeholder="Valid Card Number"
+                                                            html-autocomplete="cc-number"
+                                                            html-autofocus="true"
+                                                            onkeypress="return isNumberKey(event)"
+                                                            />
+                                            <span class="input-group-addon"><i class="fa fa-credit-card"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-7 col-md-7">
+                                    <div class="form-group ">
+                                        <label for="cardExpiry"><span class="hidden-xs">EXPIRATION</span><span class="visible-xs-inline">EXP</span> DATE</label>
+                                        <apex:inputText value="{!cardExpiry}"
+                                                        id="cardExpiry"
+                                                        Styleclass="form-control" 
+                                                        html-name="cardExpiry"
+                                                        html-placeholder="MM / YY"
+                                                        html-autocomplete="cc-exp"
+                                                        />
+                                    </div>
+                                </div>
+                                <div class="col-xs-5 col-md-5 pull-right">
+                                    <div class="form-group">
+                                        <label for="cardCVC">CVC</label>
+                                        <apex:inputSecret value="{!cardCVC}"
+                                                          id="cardCVC"
+                                                          styleClass="form-control"
+                                                          html-name="cardCVC"
+                                                          html-placeholder="CVC"
+                                                          maxlength="3"
+                                                          />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <apex:commandButton id="Confirm" onclick="validateAndPay(); return false;" value="Confirm" styleclass="btn btn-success btn-lg btn-block"/>
+                                    <apex:actionFunction id="updateOpportunity" name="updateOpportunity" action="{!updateOpportunity}" oncomplete="chargeAmount()" reRender="opportunityPaidMsg"/>
+                                    <apex:actionFunction id="chargeAmount" name="chargeAmount" action="{!chargeAmount}"/> 
+                                </div>
+                            </div>
+                            <apex:outputPanel id="opportunityPaidMsg" rendered="{!isOpportunityPaid}">
+                                <p style="color: red;">You have already paid for this Registration. Please try new registration.</p>
+                            </apex:outputPanel>
+                            <div class="row" style="display:none;" id="paymentErrorDiv">
+                                <div class="col-xs-12">
+                                    <p id="paymentErrorText" style="color: red;"></p>
+                                </div>
+                            </div>
+                        </apex:form>
+                    </div>
+                </div>
+                <!-- CREDIT CARD FORM ENDS HERE -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    function isNumberKey(evt){
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+        return true;
+    }
+    </script>
+    <script>
+    function validateAndPay(){
+        var cardNumber = document.getElementById('paymentPage:paymentForm:cardNumber').value;
+        var cardType = document.getElementById('paymentPage:paymentForm:out').innerHTML;
+        var cardExpiry = document.getElementById('paymentPage:paymentForm:cardExpiry').value;
+        var cardName = document.getElementById('paymentPage:paymentForm:cardName').value;
+        var cardCVC = document.getElementById('paymentPage:paymentForm:cardCVC').value;
+        var errorDiv = document.getElementById('paymentErrorDiv');
+        var errorText = document.getElementById('paymentErrorText');        
+        var isValidCardtype = true;
+        var validDetails = true;
+        var errorMsg = '';
+        
+        if(cardType != ''){
+            isCardNumberValid = validateCardNumber(cardType, cardNumber);
+            if(isCardNumberValid == true){
+                if(cardName != ''){
+                    var pattern = /^(0[1-9]|10|11|12)\/[0-9]{2}$/;
+                    if(cardExpiry.match(pattern)){
+                        var cvcpattern = /^[0-9]{3}$/;
+                        var cvcpatternAmex = /^[0-9]{4}$/;
+                        if(cardType == 'American Express'){
+                            if(!cardCVC.match(cvcpatternAmex)){
+                                validDetails = false;
+                                errorMsg = 'Please enter valid CVC';
+                            }
+                        } else {
+                            if(!cardCVC.match(cvcpattern)){
+                                validDetails = false;
+                                errorMsg = 'Please enter valid CVC';
+                            }     
+                        }
+                        
+                    } else {
+                        validDetails = false;
+                        errorMsg = 'Please enter valid card expiry';
+                    }
+                } else {
+                    validDetails = false;
+                    errorMsg = 'Please enter valid name on card';
+                }
+            } else {
+                validDetails = false;
+                errorMsg = 'Please enter valid card number for ' + cardType;
+            }
+        } else {
+            validDetails = false;
+            errorMsg = 'Please select card type';
+        }
+        
+        if(validDetails == false){
+            errorDiv.style.display = 'block';
+            errorText.innerHTML = errorMsg;
+        } else{
+            var paybutton = document.getElementById('paymentPage:paymentForm:Confirm');
+            paybutton.disabled=true;
+            paybutton.value='Processing, please wait...';
+            updateOpportunity();
+        }
+    }
+    
+    function validateCardNumber(cardType, cardNumber){
+        if(cardType == 'American Express'){
+            var pattern = /^(?:3[47][0-9]{13})$/;  
+            if(cardNumber.match(pattern)){  
+                return true;  
+            } else {   
+                return false;  
+            }  
+        } else if(cardType == 'Visa'){
+            var pattern = /^(?:4[0-9]{12}(?:[0-9]{3})?)$/;
+            if(cardNumber.match(pattern)){  
+                return true;  
+            } else {  
+                return false;  
+            }
+        } else if(cardType == 'Mastercard'){
+            var pattern = /^(?:5[1-5][0-9]{14})$/;  
+            if(cardNumber.match(pattern)){
+                return true;  
+            } else {  
+                return false;  
+            }  
+        }
+    }
+    
+    function showSurchargeMsg(){
+        var cardType = document.getElementById('paymentPage:paymentForm:out').innerHTML;
+        var amexDiv = document.getElementById('amexDiv');
+        var cardCVC = document.getElementById('paymentPage:paymentForm:cardCVC');
+        
+        var att = document.createAttribute("maxlength");       // Create a "class" attribute
+        
+        
+        if(cardType == 'American Express'){
+            amexDiv.style.display = 'block';
+            att.value = "4";
+            cardCVC.setAttributeNode(att);
+        }else{
+            amexDiv.style.display = 'none';
+            att.value = "3";
+            cardCVC.setAttributeNode(att);
+        }
+    }
+    </script>
+    <style>
+        .col-centered{
+        float: none;
+        margin: 0 auto;
+        }
+    </style>
+</apex:page>

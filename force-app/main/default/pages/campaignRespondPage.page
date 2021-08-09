@@ -1,0 +1,99 @@
+<apex:page sidebar="false" standardStylesheets="true" showHeader="false" title="Thank you" controller="CampaignResponses" action="{!userResponded}">
+    <!-- https://c.cs6.visual.force.com/apex/campaignRespondPage?id=00v9000000Efv3AAAR&response=yes -->
+    <apex:form >
+
+<script src="https://code.jquery.com/jquery-1.8.2.js" />
+        <apex:slds />
+        <style>
+        h2{
+        font-size: 25px !Important;
+        }
+        </style>
+        <script>
+            $(document).ready(function(){
+                console.log($('[id*=myID]')[10]);
+                showOtherText($('[id*=myID]')[10]);
+            });
+        
+            function showOtherText(cb)
+            {
+                console.log(cb.checked);
+                console.log(cb.value);
+                if(cb.value == 'Other')
+                {
+                    if(cb.checked == true)
+                    {
+                        document.getElementById('other').style.display = 'block';
+                     }
+                    else
+                    {
+                        document.getElementById('other').style.display = 'none';
+                    }
+                }
+            }
+        </script>
+<script>
+  function calculate(frst){
+  var Fname = document.getElementById(frst).value;
+  alert(Fname);
+   var res = confirm('Do you want to calculate?');
+   if(res == true)
+      Fname = 'True';
+      alert(Fname);
+  }
+ </script>
+
+    <center>
+        <img alt="Australian British Chamber of Commerce" class="site-logo image-style-none" src="https://www.britishchamber.com/sites/all/themes/abcc/logo.png" typeof="foaf:Image"/>
+    </center>
+    <br/>
+    <br/>
+    <apex:pageBlock >
+    <p style="font-size:20px;">Thank you for your response. </p>
+    <br/>
+        <apex:pageBlockSection columns="1">    
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >
+            <apex:outputText ><span style="font-size:20px;"> If this format of event is not of interest, please indicate below your preference. </span></apex:outputText>
+                 <apex:selectCheckboxes value="{!selectedTypeEvents}" style="margin-left: 25px;font-size:20px;" layout="pageDirection">
+                    <apex:selectOptions value="{!TypeOfEvents}"/>
+                </apex:selectCheckboxes><br/>
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        
+        
+        <!-- 4. Que -->
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel >
+            <apex:outputText ><span style="font-size:20px;"> If this sector is not of interest, please  indicate your preference. </span></apex:outputText>
+                 <apex:selectCheckboxes value="{!selectedIndusType}" style="margin-left: 25px;font-size:20px;" layout="pageDirection" onclick="showOtherText(this);" id="myID">
+                     <apex:selectOptions value="{!IndustryType}"/>
+                </apex:selectCheckboxes><br/>
+                <div id="other" style = "display:none">
+                    <apex:inputText style="margin-left: 25px;" size="50" value="{!otherIndustries}"/>
+                </div>
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        
+       <p style="font-size:20px;"> If you have any additional feedback, please let us know below. </p>
+           <apex:outputPanel >
+                <div id="usercomment">
+                    <apex:inputTextarea style="margin-left: 25px; width:50% ;height:50%;" value="{!usercomment}" />
+                </div>
+            </apex:outputPanel>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockButtons location="bottom" style="padding-left:100px !important;">
+           <apex:commandButton value="Submit Preferences" styleClass="slds-button slds-button--brand" action="{!submitResponses}"/>
+           <apex:commandButton value="Cancel" styleClass="slds-button slds-button--neutral" onclick="javascript:window.close();"/>          
+        </apex:pageBlockButtons>
+        </apex:pageBlock>
+        <center>
+            <p style="font-size:20px;">Thank you for your response.</p>
+        </center>
+         
+   </apex:form>
+        <script>
+            window.setTimeout(triggerRedirect,5000);
+    </script>
+</apex:page>
