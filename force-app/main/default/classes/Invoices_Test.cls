@@ -3,6 +3,10 @@ public with sharing class Invoices_Test {
 	@testsetup
     Public Static void testData(){
         List<Opportunity> oppList = new List<Opportunity>();
+        
+        csXero_Setting__c xeroSetting = New csXero_Setting__c(Name = 'Xero',
+                                                             Xero_Tenant_Id__c = '7febd1ae-5213-4189-a4a5-adc7f39551a5');
+        insert xeroSetting;
        
         //added by YP
 		Tracking__c tracYp = new Tracking__c();

@@ -18,7 +18,7 @@ public without sharing class Invoices {
                     jsonreq=jsonreq.replace(parser.getText(),'Type');
                 }
             }
-		HttpResponse res = xc.doPost(XeroConfig.API_ENDPOINT_URL+'invoices', jsonreq);
+		HttpResponse res = xc.doPost('invoices', jsonreq);
         system.debug('Urvish ::' + res.getBody());
         XeroCreateInvoiceResponse resposne = XeroCreateInvoiceResponse.parse(res.getBody());
         return resposne;
@@ -26,12 +26,12 @@ public without sharing class Invoices {
 
 	public void getInvoices(){
 		XeroClient xc = new XeroClient();
-		HttpResponse res = xc.doGet(XeroConfig.API_ENDPOINT_URL+'invoices', null);
+		HttpResponse res = xc.doGet('invoices', null);
 	}
 
     public OnlineInvoiceResponse getOnlineInvoice(String invId){
         XeroClient xc = new XeroClient();
-        HttpResponse res = xc.doGet(XeroConfig.API_ENDPOINT_URL+'Invoices/'+invId+'/OnlineInvoice', null);
+        HttpResponse res = xc.doGet('Invoices/'+invId+'/OnlineInvoice', null);
         OnlineInvoiceResponse resposne = OnlineInvoiceResponse.parse(res.getBody());
         return resposne;
     }
