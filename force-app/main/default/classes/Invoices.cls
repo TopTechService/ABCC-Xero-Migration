@@ -31,7 +31,7 @@ public without sharing class Invoices {
 
     public OnlineInvoiceResponse getOnlineInvoice(String invId){
         XeroClient xc = new XeroClient();
-        HttpResponse res = xc.doGet('Invoices/'+invId+'/OnlineInvoice', null);
+        HttpResponse res = xc.doGet('Invoices/'+invId, null);
         OnlineInvoiceResponse resposne = OnlineInvoiceResponse.parse(res.getBody());
         return resposne;
     }

@@ -12,7 +12,7 @@ public class Contacts {
         if(req != null)
         	jsonreq = JSON.serialize(req);
         system.debug('Urvish ::' + jsonreq);
-        HttpResponse res = xc.doPost(XeroConfig.API_ENDPOINT_URL+'contacts', jsonreq);
+        HttpResponse res = xc.doPost('contacts', jsonreq);
         system.debug('Res :' + res.getBody());
         XeroCreateContactResponse response = XeroCreateContactResponse.parse(res.getBody());
         system.debug('Urvish 25/4:::' + response);
@@ -22,7 +22,7 @@ public class Contacts {
 
 	public XeroCreateContactResponse getContacts(Integer page){
 		XeroClient xc = new XeroClient();
-		HttpResponse res = xc.doGet(XeroConfig.API_ENDPOINT_URL+'contacts', null);
+		HttpResponse res = xc.doGet('contacts', null);
         system.debug('Res :' + res.getBody());
         XeroCreateContactResponse response = XeroCreateContactResponse.parse(res.getBody());
 
