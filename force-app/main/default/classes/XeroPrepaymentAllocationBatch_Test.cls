@@ -98,7 +98,6 @@ public class XeroPrepaymentAllocationBatch_Test {
 	    Pricebook2Id = pricebookId, Product2Id = prod.Id,
 	    UnitPrice = 10000, IsActive = true);
 	    insert pbEntry;
-
 	    
 	    opportunity obj_opportunity = new opportunity();
 	    obj_opportunity.Name='test';
@@ -111,19 +110,24 @@ public class XeroPrepaymentAllocationBatch_Test {
 	    obj_opportunity.Event__c = obj_Event.Id;
 	    insert obj_opportunity;
        
-        OpportunityLineItem  ol = new OpportunityLineItem();
-         ol.opportunityid = obj_opportunity.id;
-         ol.quantity = 4;       
-         ol.TotalPrice = ol.quantity * pbEntry.UnitPrice ;
-         ol.PricebookEntryId = pbEntry.id ;
-         insert ol;
-         System.debug([SELECT Id, Amount, Surchrge__c, Xero_Invoice_Status__c, Xero_Invoice_Id__c, Xero_Prepayment_Id__c, Event__r.Event_Finish_Time__c, Liability_Bank_Transaction__c FROM Opportunity WHERE (Xero_Invoice_Status__c = 'AUTHORISED' AND Event__r.Event_Finish_Time__c = YESTERDAY) ]);
-		String soql = 'SELECT Id, Amount, Surchrge__c, Xero_Invoice_Status__c, Xero_Invoice_Id__c, Xero_Prepayment_Id__c, Event__r.Event_Finish_Time__c, Liability_Bank_Transaction__c ';
-        soql += 'FROM Opportunity WHERE (Xero_Invoice_Status__c = \'AUTHORISED\' AND Event__r.Event_Finish_Time__c = YESTERDAY)';
+      OpportunityLineItem  ol = new OpportunityLineItem();
+      ol.opportunityid = obj_opportunity.id;
+      ol.quantity = 4;       
+      ol.TotalPrice = ol.quantity * pbEntry.UnitPrice ;
+      ol.PricebookEntryId = pbEntry.id ;
+      insert ol;
 
-        Test.StartTest();
-        XeroPrepaymentAllocationScheduleBatch uca = new XeroPrepaymentAllocationScheduleBatch(soql);
-        Id batchId = Database.executeBatch(uca);
-        Test.stopTest();
+      csXero_Setting__c xeroSetting = New csXero_Setting__c(Name = 'Xero',
+      Xero_Tenant_Id__c = '7febd1ae-5213-4189-a4a5-adc7f39551a5');
+      insert xeroSetting;        
+          
+      System.debug([SELECT Id, Amount, Surchrge__c, Xero_Invoice_Status__c, Xero_Invoice_Id__c, Xero_Prepayment_Id__c, Event__r.Event_Finish_Time__c, Liability_Bank_Transaction__c FROM Opportunity WHERE (Xero_Invoice_Status__c = 'AUTHORISED' AND Event__r.Event_Finish_Time__c = YESTERDAY) ]);
+      String soql = 'SELECT Id, Amount, Surchrge__c, Xero_Invoice_Status__c, Xero_Invoice_Id__c, Xero_Prepayment_Id__c, Event__r.Event_Finish_Time__c, Liability_Bank_Transaction__c ';
+      soql += 'FROM Opportunity WHERE (Xero_Invoice_Status__c = \'AUTHORISED\' AND Event__r.Event_Finish_Time__c = YESTERDAY)';
+
+      Test.StartTest();
+      XeroPrepaymentAllocationScheduleBatch uca = new XeroPrepaymentAllocationScheduleBatch(soql);
+      Id batchId = Database.executeBatch(uca);
+      Test.stopTest();
     }
 }

@@ -68,7 +68,11 @@ public class CreatePaymentButtonController_Test {
 
         insert oli2;
     	
-    	Test.setMock(HttpCalloutMock.class, new BankTransactionsMock());
+        csXero_Setting__c xeroSetting = New csXero_Setting__c(Name = 'Xero',
+        Xero_Tenant_Id__c = '7febd1ae-5213-4189-a4a5-adc7f39551a5');
+        insert xeroSetting;        
+
+        Test.setMock(HttpCalloutMock.class, new BankTransactionsMock());
     	Test.startTest();
     	PageReference pageRef = Page.CreatePaymentButton;
         pageRef.getParameters().put('id', opp.Id);
@@ -124,6 +128,10 @@ public class CreatePaymentButtonController_Test {
         oli2.Product2Id = standardPrice.Id;
 
         insert oli2;
+
+        csXero_Setting__c xeroSetting = New csXero_Setting__c(Name = 'Xero',
+        Xero_Tenant_Id__c = '7febd1ae-5213-4189-a4a5-adc7f39551a5');
+        insert xeroSetting;        
 
         Test.startTest();
         Test.setMock(HttpCalloutMock.class, new PaymentMock());

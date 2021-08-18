@@ -57,7 +57,12 @@ public class Payment_Test {
         	oli.Product2Id = standardPrice.Id;
 
         	insert oli;
-    }
+    	
+            csXero_Setting__c xeroSetting = New csXero_Setting__c(Name = 'Xero',
+            Xero_Tenant_Id__c = '7febd1ae-5213-4189-a4a5-adc7f39551a5');
+            insert xeroSetting;        
+    
+        }
 
 	@isTest
     Public Static void createPaymentTest(){

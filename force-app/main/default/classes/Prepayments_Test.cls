@@ -2,6 +2,11 @@
 public class Prepayments_Test {
 	@isTest
     Public Static void allocateBankTransactionsTest(){
+
+        csXero_Setting__c xeroSetting = New csXero_Setting__c(Name = 'Xero',
+        Xero_Tenant_Id__c = '7febd1ae-5213-4189-a4a5-adc7f39551a5');
+        insert xeroSetting;        
+        
     	Test.setMock(HttpCalloutMock.class, new MockHttpResponseGenerator());
         Prepayments prepayment = new Prepayments();
         Test.startTest();

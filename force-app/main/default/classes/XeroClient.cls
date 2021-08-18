@@ -15,7 +15,10 @@ public with sharing class XeroClient {
     public HttpResponse doGet(String resourceName, String query){
         HttpRequest request = createRequest('GET', resourceName, query);
         Http h = new Http();
-        System.debug(request);
+        System.debug('Dan - doGet request='+request);
+        System.debug('Dan - doGet request body=' + request.getBody());
+        system.debug('Dan - doGet request endpoint=' + request.getEndpoint());
+        system.debug('Dan - doGet request string=' + request.toString());
         HttpResponse res = h.send(request);
 
         return res;
@@ -25,6 +28,10 @@ public with sharing class XeroClient {
         HttpRequest request = createRequest('POST', resourceName, null);
         request.setBody(reqbody);
         Http h = new Http();
+        System.debug('Dan - doPost request='+request);
+        System.debug('Dan - doPost request body=' + request.getBody());
+        system.debug('Dan - doPost request endpoint=' + request.getEndpoint());
+        system.debug('Dan - doPost request string=' + request.toString());
         HttpResponse res = h.send(request);
         return res;
     }
@@ -33,6 +40,10 @@ public with sharing class XeroClient {
         HttpRequest request = createRequest('PUT', resourceName, null);
         request.setBody(reqbody);
         Http h = new Http();
+        System.debug('Dan - doPut request='+request);
+        System.debug('Dan - doPut request body=' + request.getBody());
+        system.debug('Dan - doPut request endpoint=' + request.getEndpoint());
+        system.debug('Dan - doPut request string=' + request.toString());
         HttpResponse res = h.send(request);
         return res;
     }
