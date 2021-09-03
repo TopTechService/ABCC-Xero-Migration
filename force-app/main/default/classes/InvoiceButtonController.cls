@@ -53,24 +53,12 @@ public class InvoiceButtonController {
             //Added by Yp
             System.debug('---True Or False---'+TrackOptionAndId.containsKey(opp[0].Event__r.Our_Reference__c));
             System.debug('------check null----'+TrackOptionAndId.get(opp[0].Event__r.Our_Reference__c));
-            if(!TrackOptionAndId.containsKey(opp[0].Event__r.Our_Reference__c) && TrackOptionAndId.get(opp[0].Event__r.Our_Reference__c)==null && opp[0].Event__r.Our_Reference__c != null)
-            {
+            if(!TrackOptionAndId.containsKey(opp[0].Event__r.Our_Reference__c) && TrackOptionAndId.get(opp[0].Event__r.Our_Reference__c)==null && opp[0].Event__r.Our_Reference__c != null) {
                 System.debug('----create Tracking Options------');
                 TrackingOption TrackOpt = new TrackingOption();
                 //TrackingCategoryResponse tResponse = TrackOpt.createTrackingOption(test);
-                TrackingCategoryResponse resTrack = TrackOpt.createTrackingOption(opp[0].Event__r.Our_Reference__c,TrackingCategory.TrackingCategoryID__c);
-                System.debug('-----resTrack----'+resTrack);
-                trackOptions.Tracking__c = TrackingCategory.Id;
-                for(TrackingCategoryResponse.Options Test : resTrack.Options)
-                {
-                    if(Test.Name == opp[0].Event__r.Our_Reference__c)
-                    {
-                        trackOptions.Name = Test.Name;
-                        trackOptions.TrackingOptionID__c = Test.TrackingOptionID;
-                        System.debug('-----Test.Name----'+trackOptions);
-                    }
-                }
-                
+                String trackingOptionID = TrackOpt.createTrackingOption(opp[0].Event__r.Our_Reference__c,TrackingCategory.TrackingCategoryID__c,TrackingCategory.Id);
+                System.debug('Dan - TrackingOptionID=' + trackingOptionID);
             }
             
             //*****

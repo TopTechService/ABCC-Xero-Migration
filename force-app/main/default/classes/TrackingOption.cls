@@ -3,44 +3,50 @@ public class TrackingOption {
 			
 	}
     
-    public TrackingCategoryResponse createTrackingOption(String trackOptionName , String TrackCatId){
+    public String createTrackingOption(String trackOptionName , String TrackCatId, String TrackingCategoryID){
 		XeroClient xc = new XeroClient();
    
         TrackingCategoryRequest req = PrepareTrackingCategories(trackOptionName);
-        //TrackingOption__c ToMyp = new TrackingOption__c();
-        //TrackingOption__c nullTo = new TrackingOption__c();
         
         String jsonreq;
         if(req != null)
         {
-            jsonreq = JSON.serialize(req);
+            jsonreq = JSON.serialize(req);  //Serialized Tracking Option Name
         }
         ////
-        HttpResponse res1 = xc.doGet(XeroConfig.API_ENDPOINT_URL+'TrackingCategories/'+TrackCatId+'/Options', '');
-        TrackingCategoryResponse response1 = TrackingCategoryResponse.parse(res1.getBody());
-        TrackingCategoryResponse response;
+        HttpResponse res1 = xc.doGet('TrackingCategories?' + TrackCatId, null);
+        System.debug('Dan - res1=' + res1.getBody());
+        TrackingOptionsResponse response1 = TrackingOptionsResponse.parse(res1.getBody());
+        TrackingOptionsResponse response;
+        String trackingOptionID;
         Boolean Present = false;
         system.debug('Yatish response1 ----->' + response1);
-        for(TrackingCategoryResponse.Options resp : response1.Options)
-        {
-            if(resp.Name == trackOptionName)
-            {
-                System.debug('already present');
-                Present = true;
+        
+        for(TrackingOptionsResponse.TrackingCategories trackingCats : response1.TrackingCategories) {
+            for(TrackingOptionsResponse.Options trackOptions : trackingCats.Options) {
+                System.debug('Dan - TrackingOptionName=' + trackOptions.Name);
+                if(trackOptions.Name == trackOptionName) {
+                    System.debug('Tracking Option in Xero');
+                    Present = true;
+                    trackingOptionID = trackOptions.TrackingOptionID;
+                }
             }
         }
         
-        if(Present == true)
-        {
-            response = TrackingCategoryResponse.parse(res1.getBody());
-        }else{
-            system.debug('Yatish req -----> ' + jsonreq);
-            HttpResponse res = xc.doPut(XeroConfig.API_ENDPOINT_URL+'TrackingCategories/'+TrackCatId+'/Options', jsonreq);
-            system.debug('Yatish res ----->' + res.getBody());
-            response = TrackingCategoryResponse.parse(res.getBody());
+        if(Present != true) {
+            system.debug('Tracking Option not in Xero');
+            HttpResponse res = xc.doPut('TrackingCategories/' + TrackCatId + '/Options', jsonreq);
+            if(res.getStatusCode() == 200) {
+                system.debug('Yatish res ----->' + res.getBody());
+                response = TrackingOptionsResponse.parse(res.getBody());
+                for(TrackingOptionsResponse.TrackingCategories tC :response.TrackingCategories) {
+                    for(TrackingOptionsResponse.Options tO :tC.Options) {
+                        trackingOptionID = tO.TrackingOptionID;
+                    }
+                }
+            }
         }
-        
-        return response;
+        return trackingOptionID;
 	}
     
     public TrackingCategoryRequest PrepareTrackingCategories(String trackOptionName){
