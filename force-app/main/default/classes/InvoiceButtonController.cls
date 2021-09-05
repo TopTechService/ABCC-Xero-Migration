@@ -2,8 +2,6 @@ public class InvoiceButtonController {
     
     public pagereference createInvoice(){
         Id oppId = ApexPages.currentPage().getParameters().get('id');
-        TrackingOption__c trackOptions = new TrackingOption__c();
-        TrackingOption__c Nullcheck = new TrackingOption__c();
         
         System.debug('oppId====' + oppId);
         List<Opportunity> opp = [Select Id, Name, Description, Surchrge__c, Xero_Invoice_Status__c, Xero_Invoice_Id__c,Add_GST_on_Invoice__c,
@@ -53,12 +51,20 @@ public class InvoiceButtonController {
             //Added by Yp
             System.debug('---True Or False---'+TrackOptionAndId.containsKey(opp[0].Event__r.Our_Reference__c));
             System.debug('------check null----'+TrackOptionAndId.get(opp[0].Event__r.Our_Reference__c));
+            List<TrackingOption__c> newTrackingOptions = New List<TrackingOption__c>();
             if(!TrackOptionAndId.containsKey(opp[0].Event__r.Our_Reference__c) && TrackOptionAndId.get(opp[0].Event__r.Our_Reference__c)==null && opp[0].Event__r.Our_Reference__c != null) {
                 System.debug('----create Tracking Options------');
                 TrackingOption TrackOpt = new TrackingOption();
                 //TrackingCategoryResponse tResponse = TrackOpt.createTrackingOption(test);
                 String trackingOptionID = TrackOpt.createTrackingOption(opp[0].Event__r.Our_Reference__c,TrackingCategory.TrackingCategoryID__c,TrackingCategory.Id);
                 System.debug('Dan - TrackingOptionID=' + trackingOptionID);
+                if(trackingOptionID != null) {
+                    TrackingOption__c newOption = New TrackingOption__c(Name = opp[0].Event__r.Our_Reference__c,
+                                                                        Tracking__c = TrackingCategory.Id,
+                                                                        TrackingOptionID__c = trackingOptionID
+                    );
+                    newTrackingOptions.add(newOption);
+                }
             }
             
             //*****
@@ -87,9 +93,8 @@ public class InvoiceButtonController {
                }
             System.debug(updatedCon);
             update updatedCon;
-            if(Nullcheck != trackOptions)
-            {
-                insert trackOptions;
+            if(newTrackingOptions.size() != 0){
+                insert newTrackingOptions;
             }
         }
         
